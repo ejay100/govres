@@ -5,10 +5,10 @@
   "description": "GOVRES simulation, analytics & stress testing",
   "main": "src/index.ts",
   "scripts": {
-    "simulate": "ts-node src/index.ts",
-    "simulate:cocoa": "ts-node src/cocoa-flow.ts",
-    "simulate:contractor": "ts-node src/contractor-flow.ts",
-    "simulate:stress": "ts-node src/stress-test.ts"
+    "simulate": "tsx src/index.ts",
+    "simulate:cocoa": "tsx src/cocoa-flow.ts",
+    "simulate:contractor": "tsx src/contractor-flow.ts",
+    "simulate:stress": "tsx src/stress-test.ts"
   },
   "dependencies": {
     "@govres/shared": "1.0.0",

@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "skipLibCheck": true,
+    "paths": {
+      "@govres/shared": ["../shared/dist"],
+      "@govres/ledger": ["../ledger/dist"],
+      "@govres/oracle": ["../oracle/dist"],
+      "@govres/security": ["../security/dist"]
+    }
+  },
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
+}

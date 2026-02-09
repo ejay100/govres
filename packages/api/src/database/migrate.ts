@@ -461,8 +461,20 @@ CREATE TABLE IF NOT EXISTS account_balances (
 export default MIGRATION_SQL;
 
 // Run migration when executed directly
+export async function runMigration() {
+  const { query } = await import('./connection');
+  console.log('Running GOVRES database migration...');
+  try {
+    await query(MIGRATION_SQL);
+    console.log('Migration completed successfully.');
+  } catch (error: any) {
+    console.error('Migration failed:', error.message);
+    throw error;
+  }
+}
+
 if (require.main === module) {
-  console.log('GOVRES Database Migration SQL:');
-  console.log(MIGRATION_SQL);
-  console.log('\\n--- Run this SQL against your PostgreSQL database ---');
+  runMigration()
+    .then(() => process.exit(0))
+    .catch(() => process.exit(1));
 }

@@ -4,7 +4,6 @@
     "module": "commonjs",
     "lib": ["ES2022"],
     "outDir": "./dist",
-    "rootDir": "./src",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -14,13 +13,20 @@
     "declarationMap": true,
     "sourceMap": true,
     "moduleResolution": "node",
+    "baseUrl": ".",
     "paths": {
-      "@govres/shared": ["./packages/shared/src"],
-      "@govres/ledger": ["./packages/ledger/src"],
-      "@govres/oracle": ["./packages/oracle/src"],
-      "@govres/api": ["./packages/api/src"],
-      "@govres/simulation": ["./packages/simulation/src"]
+      "@govres/shared": ["packages/shared/src"],
+      "@govres/shared/*": ["packages/shared/src/*"],
+      "@govres/ledger": ["packages/ledger/src"],
+      "@govres/ledger/*": ["packages/ledger/src/*"],
+      "@govres/oracle": ["packages/oracle/src"],
+      "@govres/oracle/*": ["packages/oracle/src/*"],
+      "@govres/security": ["packages/security/src"],
+      "@govres/security/*": ["packages/security/src/*"]
     }
   },
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "packages/*/src/**/*.ts"
+  ],
+  "exclude": ["node_modules", "dist", "packages/web"]
 }

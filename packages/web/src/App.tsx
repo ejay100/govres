@@ -1,14 +1,5 @@
 /**
- * GOVRES — Main App with Role-Based Routing
- * 
- * Routes users to their respective portals based on their role:
- * - BoG Admin/Auditor → Admin Dashboard
- * - Government Agency → Project Management Portal
- * - Commercial Bank → Settlement Dashboard
- * - Contractor → Payment Portal
- * - Farmer/LBC → CRDN Management
- * - Diaspora → Yield Notes Portal
- * - Public → Read-only Dashboard
+ * GOVRES — Main App with Auth & Role-Based Routing
  */
 
 import React from 'react';
@@ -21,6 +12,7 @@ import { FarmerPortal } from './pages/FarmerPortal';
 import { ContractorPortal } from './pages/ContractorPortal';
 import { AgencyPortal } from './pages/AgencyPortal';
 import { DiasporaPortal } from './pages/DiasporaPortal';
+import { ProtectedRoute } from './components/ProtectedRoute';
 
 export default function App() {
   return (
@@ -29,13 +21,37 @@ export default function App() {
       <Route path="/" element={<PublicDashboard />} />
       <Route path="/login" element={<Login />} />
 
-      {/* Role-specific portals */}
-      <Route path="/bog/*" element={<BogDashboard />} />
-      <Route path="/bank/*" element={<BankDashboard />} />
-      <Route path="/farmer/*" element={<FarmerPortal />} />
-      <Route path="/contractor/*" element={<ContractorPortal />} />
-      <Route path="/agency/*" element={<AgencyPortal />} />
-      <Route path="/diaspora/*" element={<DiasporaPortal />} />
+      {/* Role-specific protected portals */}
+      <Route path="/bog/*" element={
+        <ProtectedRoute allowedRoles={['BOG_ADMIN', 'BOG_AUDITOR']}>
+          <BogDashboard />
+        </ProtectedRoute>
+      } />
+      <Route path="/bank/*" element={
+        <ProtectedRoute allowedRoles={['COMMERCIAL_BANK']}>
+          <BankDashboard />
+        </ProtectedRoute>
+      } />
+      <Route path="/farmer/*" element={
+        <ProtectedRoute allowedRoles={['FARMER', 'LBC']}>
+          <FarmerPortal />
+        </ProtectedRoute>
+      } />
+      <Route path="/contractor/*" element={
+        <ProtectedRoute allowedRoles={['CONTRACTOR']}>
+          <ContractorPortal />
+        </ProtectedRoute>
+      } />
+      <Route path="/agency/*" element={
+        <ProtectedRoute allowedRoles={['GOVT_AGENCY']}>
+          <AgencyPortal />
+        </ProtectedRoute>
+      } />
+      <Route path="/diaspora/*" element={
+        <ProtectedRoute allowedRoles={['DIASPORA']}>
+          <DiasporaPortal />
+        </ProtectedRoute>
+      } />
 
       {/* Fallback */}
       <Route path="*" element={<Navigate to="/" replace />} />

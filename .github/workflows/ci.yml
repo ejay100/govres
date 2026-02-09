@@ -30,7 +30,6 @@ jobs:
 
       - name: TypeScript compile check
         run: npx tsc --noEmit --project tsconfig.json
-        continue-on-error: true
 
   # ─────────────────────────────────────────
   # Build all packages

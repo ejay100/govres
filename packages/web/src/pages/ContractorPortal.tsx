@@ -1,200 +1,147 @@
 /**
- * GOVRES — Government Contractor Portal
- * Payment receipt, project milestones, supplier payments, cash-out
+ * GOVRES — Contractor Portal
+ * Government project tracking, milestones, and payment history.
  */
 
-import React from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { DashboardLayout } from '../components/DashboardLayout';
+import { projectAPI, ledgerAPI } from '../lib/api';
+import { useAuth } from '../lib/auth';
 
-const cardStyle: React.CSSProperties = {
-  background: '#fff',
-  borderRadius: '12px',
-  padding: '24px',
-  boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
-};
+const fmtCedi = (n: number | undefined) =>
+  n != null ? `GH₵ ${new Intl.NumberFormat('en-GH', { minimumFractionDigits: 2 }).format(n)}` : '—';
 
 export function ContractorPortal() {
-  const contractorName = 'RoadMaster Construction Ltd';
-  const contractorId = 'CTR-ACC-2025-0087';
+  const { user } = useAuth();
+
+  const { data: projectsData, isLoading } = useQuery({
+    queryKey: ['my-projects'],
+    queryFn: () => projectAPI.list(1),
+  });
+
+  const { data: historyData } = useQuery({
+    queryKey: ['my-tx-history', user?.userId],
+    queryFn: () => ledgerAPI.accountHistory(user!.userId, 1),
+    enabled: !!user,
+  });
+
+  const projects = projectsData?.data?.projects ?? [];
+  const txHistory = historyData?.data?.transactions ?? [];
+
+  const totalBudget = projects.reduce((s: number, p: any) => s + (Number(p.total_budget_cedi) || 0), 0);
+  const totalDisbursed = projects.reduce((s: number, p: any) => s + (Number(p.disbursed_cedi) || 0), 0);
+  const activeCount = projects.filter((p: any) => p.status === 'APPROVED' || p.status === 'IN_PROGRESS').length;
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f5f6fa' }}>
-      <header style={{
-        background: '#1A1A2E',
-        color: '#fff',
-        padding: '16px 32px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-      }}>
-        <div>
-          <h1 style={{ margin: 0, fontSize: '20px' }}>
-            <span style={{ color: '#D4AF37' }}>GOVRES</span> — Contractor Portal
-          </h1>
-          <p style={{ margin: 0, fontSize: '12px', color: '#aaa' }}>{contractorName}</p>
+    <DashboardLayout title="Contractor Portal">
+      {/* Summary */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+        <div className="bg-white rounded-xl p-5 shadow-sm border-t-4 border-govres-green">
+          <p className="text-xs text-gray-500 uppercase">Active Projects</p>
+          <p className="text-2xl font-bold mt-1">{activeCount}</p>
         </div>
-        <span style={{
-          background: '#CE1126',
-          padding: '4px 12px',
-          borderRadius: '12px',
-          fontSize: '12px',
-        }}>Contractor • {contractorId}</span>
-      </header>
-
-      <main style={{ padding: '32px', maxWidth: '1400px', margin: '0 auto' }}>
-        {/* Summary Cards */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px', marginBottom: '32px' }}>
-          <div style={{ ...cardStyle, borderLeft: '4px solid #006B3F' }}>
-            <p style={{ margin: 0, fontSize: '12px', color: '#888' }}>GBDC Received</p>
-            <p style={{ margin: '8px 0 0', fontSize: '24px', fontWeight: 700, color: '#006B3F' }}>GH¢18.4M</p>
-            <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#666' }}>Total this year</p>
-          </div>
-          <div style={{ ...cardStyle, borderLeft: '4px solid #D4AF37' }}>
-            <p style={{ margin: 0, fontSize: '12px', color: '#888' }}>Pending Payments</p>
-            <p style={{ margin: '8px 0 0', fontSize: '24px', fontWeight: 700, color: '#D4AF37' }}>GH¢4.2M</p>
-            <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#666' }}>Awaiting milestones</p>
-          </div>
-          <div style={{ ...cardStyle, borderLeft: '4px solid #0F3460' }}>
-            <p style={{ margin: 0, fontSize: '12px', color: '#888' }}>Active Projects</p>
-            <p style={{ margin: '8px 0 0', fontSize: '24px', fontWeight: 700, color: '#0F3460' }}>3</p>
-            <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#666' }}>Government contracts</p>
-          </div>
-          <div style={{ ...cardStyle, borderLeft: '4px solid #CE1126' }}>
-            <p style={{ margin: 0, fontSize: '12px', color: '#888' }}>Cashed Out</p>
-            <p style={{ margin: '8px 0 0', fontSize: '24px', fontWeight: 700, color: '#CE1126' }}>GH¢14.1M</p>
-            <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#666' }}>To bank account</p>
-          </div>
+        <div className="bg-white rounded-xl p-5 shadow-sm border-t-4 border-govres-gold">
+          <p className="text-xs text-gray-500 uppercase">Total Budget</p>
+          <p className="text-2xl font-bold mt-1">{fmtCedi(totalBudget)}</p>
         </div>
+        <div className="bg-white rounded-xl p-5 shadow-sm border-t-4 border-blue-500">
+          <p className="text-xs text-gray-500 uppercase">Disbursed</p>
+          <p className="text-2xl font-bold mt-1">{fmtCedi(totalDisbursed)}</p>
+          <p className="text-xs text-gray-400 mt-1">{totalBudget ? `${((totalDisbursed / totalBudget) * 100).toFixed(1)}%` : '—'}</p>
+        </div>
+      </div>
 
-        {/* Active Projects */}
-        <div style={{ ...cardStyle, marginBottom: '24px' }}>
-          <h3 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '16px' }}>Active Government Projects</h3>
-          {[
-            {
-              name: 'Kumasi Inner Ring Road — Phase 2',
-              ministry: 'Ministry of Roads & Highways',
-              total: 'GH¢24,500,000',
-              disbursed: 'GH¢18,400,000',
-              progress: 75,
-              milestones: [
-                { name: 'Foundation & Grading', status: 'completed', amount: 'GH¢6,200,000' },
-                { name: 'Drainage Systems', status: 'completed', amount: 'GH¢4,800,000' },
-                { name: 'Asphalt Layer 1', status: 'completed', amount: 'GH¢7,400,000' },
-                { name: 'Asphalt Layer 2 & Markings', status: 'in_progress', amount: 'GH¢3,800,000' },
-                { name: 'Final Inspection & Handover', status: 'pending', amount: 'GH¢2,300,000' },
-              ],
-            },
-            {
-              name: 'Tamale Water Treatment Plant',
-              ministry: 'Ministry of Sanitation & Water Resources',
-              total: 'GH¢8,900,000',
-              disbursed: 'GH¢2,670,000',
-              progress: 30,
-              milestones: [
-                { name: 'Site Preparation', status: 'completed', amount: 'GH¢1,200,000' },
-                { name: 'Pipe Installation', status: 'completed', amount: 'GH¢1,470,000' },
-                { name: 'Treatment Units', status: 'in_progress', amount: 'GH¢3,100,000' },
-                { name: 'Testing & Commissioning', status: 'pending', amount: 'GH¢3,130,000' },
-              ],
-            },
-          ].map((project, pi) => (
-            <div key={pi} style={{
-              border: '1px solid #f0f0f0',
-              borderRadius: '12px',
-              padding: '20px',
-              marginBottom: '16px',
-            }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                <div>
-                  <h4 style={{ margin: 0, fontSize: '16px' }}>{project.name}</h4>
-                  <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#888' }}>{project.ministry}</p>
-                </div>
-                <div style={{ textAlign: 'right' }}>
-                  <p style={{ margin: 0, fontFamily: 'monospace', fontWeight: 600 }}>
-                    {project.disbursed} / {project.total}
-                  </p>
-                </div>
-              </div>
-
-              {/* Progress Bar */}
-              <div style={{ background: '#f0f0f0', borderRadius: '4px', height: '8px', marginBottom: '16px' }}>
-                <div style={{
-                  background: '#006B3F',
-                  borderRadius: '4px',
-                  height: '8px',
-                  width: `${project.progress}%`,
-                  transition: 'width 0.3s',
-                }}></div>
-              </div>
-
-              {/* Milestones */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                {project.milestones.map((ms, mi) => (
-                  <div key={mi} style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    padding: '8px 12px',
-                    background: ms.status === 'completed' ? '#f1f8e9' : ms.status === 'in_progress' ? '#fff8e1' : '#fafafa',
-                    borderRadius: '6px',
-                    fontSize: '13px',
-                  }}>
-                    <span>
-                      {ms.status === 'completed' ? '✓' : ms.status === 'in_progress' ? '◎' : '○'}{' '}
-                      {ms.name}
-                    </span>
-                    <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                      <span style={{ fontFamily: 'monospace' }}>{ms.amount}</span>
-                      <span style={{
-                        padding: '2px 8px',
-                        borderRadius: '4px',
-                        fontSize: '11px',
-                        background: ms.status === 'completed' ? '#c8e6c9' : ms.status === 'in_progress' ? '#ffe0b2' : '#e0e0e0',
-                        color: ms.status === 'completed' ? '#2e7d32' : ms.status === 'in_progress' ? '#e65100' : '#666',
-                      }}>{ms.status.replace('_', ' ')}</span>
-                    </div>
-                  </div>
+      {/* Projects Table */}
+      <div className="bg-white rounded-xl p-6 shadow-sm mb-6">
+        <h2 className="text-lg font-semibold mb-4">My Projects</h2>
+        {isLoading ? (
+          <p className="text-gray-400 py-4">Loading projects…</p>
+        ) : projects.length === 0 ? (
+          <p className="text-gray-400 py-4">No projects assigned to your account.</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left">
+              <thead className="text-xs text-gray-500 uppercase border-b">
+                <tr>
+                  <th className="py-2 pr-3">Project</th>
+                  <th className="py-2 pr-3">Region</th>
+                  <th className="py-2 pr-3">Budget</th>
+                  <th className="py-2 pr-3">Disbursed</th>
+                  <th className="py-2 pr-3">Status</th>
+                  <th className="py-2">Milestones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {projects.map((p: any) => (
+                  <tr key={p.project_id} className="border-b last:border-0">
+                    <td className="py-3 pr-3">
+                      <p className="font-medium">{p.project_name}</p>
+                      <p className="text-xs text-gray-400">{p.project_id?.slice(0, 12)}…</p>
+                    </td>
+                    <td className="py-3 pr-3">{p.region ?? '—'}</td>
+                    <td className="py-3 pr-3">{fmtCedi(p.total_budget_cedi)}</td>
+                    <td className="py-3 pr-3">{fmtCedi(p.disbursed_cedi)}</td>
+                    <td className="py-3 pr-3">
+                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                        p.status === 'APPROVED' ? 'bg-green-100 text-green-800' :
+                        p.status === 'IN_PROGRESS' ? 'bg-blue-100 text-blue-800' :
+                        p.status === 'COMPLETED' ? 'bg-purple-100 text-purple-800' :
+                        p.status === 'SUBMITTED' ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-gray-100 text-gray-600'
+                      }`}>{p.status}</span>
+                    </td>
+                    <td className="py-3">
+                      <p className="text-xs">{p.completed_milestones ?? 0} / {p.total_milestones ?? 0}</p>
+                      <div className="w-20 h-1.5 bg-gray-200 rounded-full mt-1">
+                        <div
+                          className="h-1.5 bg-govres-green rounded-full"
+                          style={{ width: `${p.total_milestones ? (p.completed_milestones / p.total_milestones) * 100 : 0}%` }}
+                        />
+                      </div>
+                    </td>
+                  </tr>
                 ))}
-              </div>
-            </div>
-          ))}
-        </div>
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
 
-        {/* Payment History */}
-        <div style={cardStyle}>
-          <h3 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '16px' }}>Payment History</h3>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px' }}>
-            <thead>
-              <tr style={{ background: '#f8f9fb' }}>
-                <th style={{ padding: '10px', textAlign: 'left' }}>Date</th>
-                <th style={{ padding: '10px', textAlign: 'left' }}>Project</th>
-                <th style={{ padding: '10px', textAlign: 'left' }}>Milestone</th>
-                <th style={{ padding: '10px', textAlign: 'right' }}>Amount</th>
-                <th style={{ padding: '10px', textAlign: 'left' }}>Channel</th>
+      {/* Payment History */}
+      <div className="bg-white rounded-xl p-6 shadow-sm">
+        <h2 className="text-lg font-semibold mb-4">Payment History</h2>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm text-left">
+            <thead className="text-xs text-gray-500 uppercase border-b">
+              <tr>
+                <th className="py-2 pr-3">Date</th>
+                <th className="py-2 pr-3">TX ID</th>
+                <th className="py-2 pr-3">Amount</th>
+                <th className="py-2">Status</th>
               </tr>
             </thead>
             <tbody>
-              {[
-                { date: 'May 12', project: 'Kumasi Ring Road', milestone: 'Asphalt Layer 1', amount: 'GH¢7,400,000', channel: 'GBDC → GCB' },
-                { date: 'Apr 20', project: 'Tamale Water', milestone: 'Pipe Installation', amount: 'GH¢1,470,000', channel: 'GBDC → GCB' },
-                { date: 'Mar 15', project: 'Kumasi Ring Road', milestone: 'Drainage Systems', amount: 'GH¢4,800,000', channel: 'GBDC → GCB' },
-                { date: 'Feb 28', project: 'Tamale Water', milestone: 'Site Preparation', amount: 'GH¢1,200,000', channel: 'GBDC → GCB' },
-              ].map((row, i) => (
-                <tr key={i} style={{ borderBottom: '1px solid #f0f0f0' }}>
-                  <td style={{ padding: '10px', color: '#888' }}>{row.date}</td>
-                  <td style={{ padding: '10px' }}>{row.project}</td>
-                  <td style={{ padding: '10px', color: '#666' }}>{row.milestone}</td>
-                  <td style={{ padding: '10px', textAlign: 'right', fontFamily: 'monospace', fontWeight: 600 }}>{row.amount}</td>
-                  <td style={{ padding: '10px' }}>
-                    <span style={{ padding: '2px 8px', borderRadius: '4px', background: '#e3f2fd', color: '#1565c0', fontSize: '12px' }}>
-                      {row.channel}
-                    </span>
-                  </td>
-                </tr>
-              ))}
+              {txHistory.length === 0 ? (
+                <tr><td colSpan={4} className="py-4 text-center text-gray-400">No payment records</td></tr>
+              ) : (
+                txHistory.map((tx: any) => (
+                  <tr key={tx.transaction_id} className="border-b last:border-0">
+                    <td className="py-2 pr-3 text-xs">{new Date(tx.created_at).toLocaleDateString()}</td>
+                    <td className="py-2 pr-3 font-mono text-xs">{tx.transaction_id?.slice(0, 12)}…</td>
+                    <td className="py-2 pr-3">{fmtCedi(tx.amount_cedi)}</td>
+                    <td className="py-2">
+                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                        tx.status === 'CONFIRMED' ? 'bg-green-100 text-green-800' :
+                        tx.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-600'
+                      }`}>{tx.status}</span>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
-      </main>
-    </div>
+      </div>
+    </DashboardLayout>
   );
 }

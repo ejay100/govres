@@ -3,9 +3,16 @@
  * 
  * Seed data for development and testing.
  * Creates sample organizations, users, and initial records.
+ * Uses bcrypt for proper password hashing.
  */
 
-const SEED_SQL = `
+import bcrypt from 'bcryptjs';
+
+async function buildSeedSQL(): Promise<string> {
+  // Hash a default dev password
+  const devHash = await bcrypt.hash('govres2025', 12);
+
+  return `
 -- ============================================================
 -- SEED DATA FOR GOVRES DEVELOPMENT
 -- ============================================================
@@ -28,27 +35,27 @@ INSERT INTO organizations (org_code, org_name, org_type, region) VALUES
   ('GFL', 'Gold Fields Ghana - Tarkwa', 'MINING_COMPANY', 'Western')
 ON CONFLICT (org_code) DO NOTHING;
 
--- Note: In production, passwords would be properly hashed with bcrypt
--- These are placeholder hashes for development only
+-- User accounts with proper bcrypt password hashes
+-- Default dev password: govres2025
 INSERT INTO user_accounts (account_id, organization_id, role, full_name, email, phone, password_hash) VALUES
-  ('BOG-ADMIN-001', (SELECT id FROM organizations WHERE org_code = 'BOG'), 'BOG_ADMIN', 
-   'GOVRES System Administrator', 'admin@bog.gov.gh', '+233302666174', '$placeholder_hash'),
+  ('BOG-ADMIN-001', (SELECT id FROM organizations WHERE org_code = 'BOG'), 'BOG_ADMIN',
+   'GOVRES System Administrator', 'admin@bog.gov.gh', '+233302666174', '${devHash}'),
   ('BOG-AUDIT-001', (SELECT id FROM organizations WHERE org_code = 'BOG'), 'BOG_AUDITOR',
-   'GOVRES Auditor', 'auditor@bog.gov.gh', '+233302666175', '$placeholder_hash'),
+   'GOVRES Auditor', 'auditor@bog.gov.gh', '+233302666175', '${devHash}'),
   ('MOF-001', (SELECT id FROM organizations WHERE org_code = 'MOF'), 'GOVT_AGENCY',
-   'Ministry of Finance Officer', 'officer@mof.gov.gh', '+233302000001', '$placeholder_hash'),
+   'Ministry of Finance Officer', 'officer@mof.gov.gh', '+233302000001', '${devHash}'),
   ('GCB-001', (SELECT id FROM organizations WHERE org_code = 'GCB'), 'COMMERCIAL_BANK',
-   'GCB Settlement Officer', 'settlement@gcbbank.com.gh', '+233302000002', '$placeholder_hash'),
+   'GCB Settlement Officer', 'settlement@gcbbank.com.gh', '+233302000002', '${devHash}'),
   ('LBC001-001', (SELECT id FROM organizations WHERE org_code = 'LBC001'), 'LBC',
-   'PBC Purchase Clerk', 'clerk@pbc.com.gh', '+233200000001', '$placeholder_hash'),
+   'PBC Purchase Clerk', 'clerk@pbc.com.gh', '+233200000001', '${devHash}'),
   ('FARMER-001', NULL, 'FARMER',
-   'Kwame Mensah', 'kwame@example.com', '+233240000001', '$placeholder_hash'),
+   'Kwame Mensah', 'kwame@example.com', '+233240000001', '${devHash}'),
   ('FARMER-002', NULL, 'FARMER',
-   'Ama Serwaa', 'ama@example.com', '+233240000002', '$placeholder_hash'),
+   'Ama Serwaa', 'ama@example.com', '+233240000002', '${devHash}'),
   ('CONTRACTOR-001', NULL, 'CONTRACTOR',
-   'Northgate Construction Ltd', 'info@northgate.com.gh', '+233300000001', '$placeholder_hash'),
+   'Northgate Construction Ltd', 'info@northgate.com.gh', '+233300000001', '${devHash}'),
   ('DIASPORA-001', NULL, 'DIASPORA',
-   'Kofi Asante', 'kofi.asante@email.com', '+14155550001', '$placeholder_hash')
+   'Kofi Asante', 'kofi.asante@email.com', '+14155550001', '${devHash}')
 ON CONFLICT (account_id) DO NOTHING;
 
 -- Initialize account balances
@@ -63,14 +70,29 @@ ON CONFLICT (account_id) DO NOTHING;
 
 -- Genesis block
 INSERT INTO ledger_blocks (block_height, previous_hash, hash, merkle_root, transaction_count, validator_id)
-VALUES (0, REPEAT('0', 64), encode(digest('genesis-govres-bog', 'sha256'), 'hex'), 
+VALUES (0, REPEAT('0', 64), encode(digest('genesis-govres-bog', 'sha256'), 'hex'),
         encode(digest('empty', 'sha256'), 'hex'), 0, 'BOG-VALIDATOR-001')
 ON CONFLICT (block_height) DO NOTHING;
 `;
+}
 
-export default SEED_SQL;
+export default buildSeedSQL;
+
+export async function runSeed() {
+  const { query } = await import('./connection');
+  console.log('Running GOVRES database seed...');
+  try {
+    const sql = await buildSeedSQL();
+    await query(sql);
+    console.log('Seed completed successfully.');
+  } catch (error: any) {
+    console.error('Seed failed:', error.message);
+    throw error;
+  }
+}
 
 if (require.main === module) {
-  console.log('GOVRES Seed SQL:');
-  console.log(SEED_SQL);
+  runSeed()
+    .then(() => process.exit(0))
+    .catch(() => process.exit(1));
 }

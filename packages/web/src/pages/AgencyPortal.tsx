@@ -1,244 +1,226 @@
 /**
  * GOVRES — Government Agency Portal
- * Budget submission, project approvals, disbursement tracking
+ * Project submission, approval tracking, fund disbursement monitoring.
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { DashboardLayout } from '../components/DashboardLayout';
+import { projectAPI } from '../lib/api';
 
-const cardStyle: React.CSSProperties = {
-  background: '#fff',
-  borderRadius: '12px',
-  padding: '24px',
-  boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
-};
+const fmtCedi = (n: number | undefined) =>
+  n != null ? `GH₵ ${new Intl.NumberFormat('en-GH', { minimumFractionDigits: 2 }).format(n)}` : '—';
 
 export function AgencyPortal() {
-  const [showNewProject, setShowNewProject] = useState(false);
+  const qc = useQueryClient();
 
-  const agencyName = 'Ministry of Roads & Highways';
+  const { data: projectsData, isLoading } = useQuery({
+    queryKey: ['agency-projects'],
+    queryFn: () => projectAPI.list(1),
+  });
+
+  const projects = projectsData?.data?.projects ?? [];
+  const submitted = projects.filter((p: any) => p.status === 'SUBMITTED').length;
+  const approved = projects.filter((p: any) => p.status === 'APPROVED' || p.status === 'IN_PROGRESS').length;
+  const totalBudget = projects.reduce((s: number, p: any) => s + (Number(p.total_budget_cedi) || 0), 0);
+
+  // ── New Project Form ──
+  const [form, setForm] = useState({
+    projectName: '',
+    description: '',
+    region: '',
+    totalBudgetCedi: '',
+    contractorId: '',
+    milestones: '',
+  });
+  const [showForm, setShowForm] = useState(false);
+
+  const createMutation = useMutation({
+    mutationFn: (data: any) => projectAPI.create(data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['agency-projects'] });
+      setForm({ projectName: '', description: '', region: '', totalBudgetCedi: '', contractorId: '', milestones: '' });
+      setShowForm(false);
+    },
+  });
+
+  const handleCreate = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Parse milestones from comma-separated text
+    const milestoneNames = form.milestones.split(',').map(m => m.trim()).filter(Boolean);
+    const milestones = milestoneNames.map((name, i) => ({
+      milestoneName: name,
+      description: name,
+      amountCedi: Number(form.totalBudgetCedi) / milestoneNames.length,
+      sequenceOrder: i + 1,
+    }));
+
+    createMutation.mutate({
+      projectName: form.projectName,
+      description: form.description,
+      region: form.region,
+      totalBudgetCedi: Number(form.totalBudgetCedi),
+      contractorId: form.contractorId,
+      milestones,
+    });
+  };
+
+  const approveMutation = useMutation({
+    mutationFn: (projectId: string) => projectAPI.approve(projectId),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['agency-projects'] }),
+  });
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f5f6fa' }}>
-      <header style={{
-        background: '#1A1A2E',
-        color: '#fff',
-        padding: '16px 32px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-      }}>
-        <div>
-          <h1 style={{ margin: 0, fontSize: '20px' }}>
-            <span style={{ color: '#D4AF37' }}>GOVRES</span> — Agency Portal
-          </h1>
-          <p style={{ margin: 0, fontSize: '12px', color: '#aaa' }}>{agencyName}</p>
+    <DashboardLayout title="Government Agency Portal">
+      {/* Summary */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+        <div className="bg-white rounded-xl p-5 shadow-sm border-t-4 border-yellow-500">
+          <p className="text-xs text-gray-500 uppercase">Submitted</p>
+          <p className="text-2xl font-bold mt-1">{submitted}</p>
         </div>
-        <span style={{
-          background: '#0F3460',
-          padding: '4px 12px',
-          borderRadius: '12px',
-          fontSize: '12px',
-          color: '#fff',
-        }}>Gov Agency</span>
-      </header>
-
-      <main style={{ padding: '32px', maxWidth: '1400px', margin: '0 auto' }}>
-        {/* Budget Overview */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px', marginBottom: '32px' }}>
-          <div style={{ ...cardStyle, borderLeft: '4px solid #006B3F' }}>
-            <p style={{ margin: 0, fontSize: '12px', color: '#888' }}>Approved Budget</p>
-            <p style={{ margin: '8px 0 0', fontSize: '24px', fontWeight: 700, color: '#006B3F' }}>GH¢245M</p>
-            <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#666' }}>FY 2025</p>
-          </div>
-          <div style={{ ...cardStyle, borderLeft: '4px solid #D4AF37' }}>
-            <p style={{ margin: 0, fontSize: '12px', color: '#888' }}>Disbursed (GBDC)</p>
-            <p style={{ margin: '8px 0 0', fontSize: '24px', fontWeight: 700, color: '#D4AF37' }}>GH¢142M</p>
-            <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#666' }}>58% utilized</p>
-          </div>
-          <div style={{ ...cardStyle, borderLeft: '4px solid #0F3460' }}>
-            <p style={{ margin: 0, fontSize: '12px', color: '#888' }}>Active Projects</p>
-            <p style={{ margin: '8px 0 0', fontSize: '24px', fontWeight: 700, color: '#0F3460' }}>12</p>
-            <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#666' }}>Across 6 regions</p>
-          </div>
-          <div style={{ ...cardStyle, borderLeft: '4px solid #CE1126' }}>
-            <p style={{ margin: 0, fontSize: '12px', color: '#888' }}>Pending Approvals</p>
-            <p style={{ margin: '8px 0 0', fontSize: '24px', fontWeight: 700, color: '#CE1126' }}>4</p>
-            <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#666' }}>Awaiting BoG/MoF</p>
-          </div>
+        <div className="bg-white rounded-xl p-5 shadow-sm border-t-4 border-govres-green">
+          <p className="text-xs text-gray-500 uppercase">Active</p>
+          <p className="text-2xl font-bold mt-1">{approved}</p>
         </div>
-
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-          <h3 style={{ fontSize: '18px', fontWeight: 600 }}>Projects & Disbursements</h3>
-          <button
-            onClick={() => setShowNewProject(!showNewProject)}
-            style={{
-              padding: '10px 20px',
-              background: '#006B3F',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '8px',
-              fontWeight: 600,
-              cursor: 'pointer',
-              fontSize: '14px',
-            }}
-          >
-            + Submit New Project
-          </button>
+        <div className="bg-white rounded-xl p-5 shadow-sm border-t-4 border-govres-gold">
+          <p className="text-xs text-gray-500 uppercase">Total Budget</p>
+          <p className="text-2xl font-bold mt-1">{fmtCedi(totalBudget)}</p>
         </div>
+      </div>
 
-        {/* New Project Form */}
-        {showNewProject && (
-          <div style={{ ...cardStyle, marginBottom: '24px', border: '2px solid #006B3F' }}>
-            <h4 style={{ margin: '0 0 16px', fontSize: '16px' }}>New Project Submission</h4>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-              <div>
-                <label style={{ fontSize: '13px', fontWeight: 500 }}>Project Name</label>
-                <input
-                  type="text"
-                  placeholder="e.g. Accra-Tema Motorway Extension"
-                  style={{ width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '8px', marginTop: '6px', boxSizing: 'border-box' }}
-                />
-              </div>
-              <div>
-                <label style={{ fontSize: '13px', fontWeight: 500 }}>Region</label>
-                <select style={{ width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '8px', marginTop: '6px', boxSizing: 'border-box' }}>
-                  <option>Greater Accra</option>
-                  <option>Ashanti</option>
-                  <option>Western</option>
-                  <option>Northern</option>
-                  <option>Eastern</option>
-                  <option>Volta</option>
-                  <option>Central</option>
-                  <option>Upper East</option>
-                  <option>Upper West</option>
-                  <option>Bono</option>
-                </select>
-              </div>
-              <div>
-                <label style={{ fontSize: '13px', fontWeight: 500 }}>Estimated Budget (GH¢)</label>
-                <input
-                  type="number"
-                  placeholder="Total project budget"
-                  style={{ width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '8px', marginTop: '6px', boxSizing: 'border-box' }}
-                />
-              </div>
-              <div>
-                <label style={{ fontSize: '13px', fontWeight: 500 }}>Contractor</label>
-                <input
-                  type="text"
-                  placeholder="Assigned contractor"
-                  style={{ width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '8px', marginTop: '6px', boxSizing: 'border-box' }}
-                />
-              </div>
-              <div style={{ gridColumn: '1 / -1' }}>
-                <label style={{ fontSize: '13px', fontWeight: 500 }}>Description</label>
-                <textarea
-                  rows={3}
-                  placeholder="Project scope and objectives"
-                  style={{ width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '8px', marginTop: '6px', boxSizing: 'border-box', resize: 'vertical' }}
-                />
-              </div>
+      {/* New Project Button */}
+      <div className="mb-6">
+        <button
+          onClick={() => setShowForm(!showForm)}
+          className="px-5 py-2.5 bg-govres-green text-white rounded-lg font-medium hover:bg-green-800 transition"
+        >
+          {showForm ? 'Cancel' : '+ Submit New Project'}
+        </button>
+      </div>
+
+      {/* New Project Form */}
+      {showForm && (
+        <div className="bg-white rounded-xl p-6 shadow-sm mb-6">
+          <h2 className="text-lg font-semibold mb-4">New Project Submission</h2>
+          <form onSubmit={handleCreate} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Project Name</label>
+              <input type="text" value={form.projectName}
+                onChange={e => setForm(p => ({ ...p, projectName: e.target.value }))}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" required />
             </div>
-            <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
-              <button style={{
-                padding: '10px 24px',
-                background: '#006B3F',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '8px',
-                fontWeight: 600,
-                cursor: 'pointer',
-              }}>Submit for Approval</button>
-              <button
-                onClick={() => setShowNewProject(false)}
-                style={{
-                  padding: '10px 24px',
-                  background: '#f5f5f5',
-                  color: '#666',
-                  border: '1px solid #ddd',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                }}
-              >Cancel</button>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Region</label>
+              <select value={form.region}
+                onChange={e => setForm(p => ({ ...p, region: e.target.value }))}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" required>
+                <option value="">Select region…</option>
+                {['Greater Accra', 'Ashanti', 'Western', 'Eastern', 'Central', 'Northern',
+                  'Volta', 'Upper East', 'Upper West', 'Bono', 'Bono East', 'Ahafo',
+                  'Western North', 'Oti', 'North East', 'Savannah'].map(r => (
+                  <option key={r} value={r}>{r}</option>
+                ))}
+              </select>
             </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Total Budget (GH₵)</label>
+              <input type="number" step="0.01" value={form.totalBudgetCedi}
+                onChange={e => setForm(p => ({ ...p, totalBudgetCedi: e.target.value }))}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" required />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Contractor ID</label>
+              <input type="text" value={form.contractorId}
+                onChange={e => setForm(p => ({ ...p, contractorId: e.target.value }))}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" placeholder="CONTRACTOR-001" required />
+            </div>
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+              <textarea value={form.description}
+                onChange={e => setForm(p => ({ ...p, description: e.target.value }))}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" rows={2} required />
+            </div>
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Milestones (comma-separated)</label>
+              <input type="text" value={form.milestones}
+                onChange={e => setForm(p => ({ ...p, milestones: e.target.value }))}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                placeholder="Land survey, Foundation, Superstructure, Finishing, Handover" required />
+            </div>
+
+            {createMutation.isError && (
+              <p className="md:col-span-2 text-sm text-red-600">
+                {(createMutation.error as any)?.response?.data?.error?.message || 'Submission failed'}
+              </p>
+            )}
+
+            <div className="md:col-span-2">
+              <button type="submit" disabled={createMutation.isPending}
+                className="px-6 py-2.5 bg-govres-green text-white rounded-lg font-medium hover:bg-green-800 disabled:opacity-50">
+                {createMutation.isPending ? 'Submitting…' : 'Submit Project'}
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* Projects Table */}
+      <div className="bg-white rounded-xl p-6 shadow-sm">
+        <h2 className="text-lg font-semibold mb-4">All Projects</h2>
+        {isLoading ? (
+          <p className="text-gray-400 py-4">Loading…</p>
+        ) : projects.length === 0 ? (
+          <p className="text-gray-400 py-4">No projects found.</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm text-left">
+              <thead className="text-xs text-gray-500 uppercase border-b">
+                <tr>
+                  <th className="py-2 pr-3">Project</th>
+                  <th className="py-2 pr-3">Region</th>
+                  <th className="py-2 pr-3">Budget</th>
+                  <th className="py-2 pr-3">Disbursed</th>
+                  <th className="py-2 pr-3">Status</th>
+                  <th className="py-2">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {projects.map((p: any) => (
+                  <tr key={p.project_id} className="border-b last:border-0">
+                    <td className="py-3 pr-3">
+                      <p className="font-medium">{p.project_name}</p>
+                      <p className="text-xs text-gray-400">{p.project_id?.slice(0, 12)}…</p>
+                    </td>
+                    <td className="py-3 pr-3">{p.region ?? '—'}</td>
+                    <td className="py-3 pr-3">{fmtCedi(p.total_budget_cedi)}</td>
+                    <td className="py-3 pr-3">{fmtCedi(p.disbursed_cedi)}</td>
+                    <td className="py-3 pr-3">
+                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                        p.status === 'APPROVED' ? 'bg-green-100 text-green-800' :
+                        p.status === 'IN_PROGRESS' ? 'bg-blue-100 text-blue-800' :
+                        p.status === 'SUBMITTED' ? 'bg-yellow-100 text-yellow-800' :
+                        p.status === 'COMPLETED' ? 'bg-purple-100 text-purple-800' :
+                        'bg-gray-100 text-gray-600'
+                      }`}>{p.status}</span>
+                    </td>
+                    <td className="py-3">
+                      {p.status === 'SUBMITTED' && (
+                        <button
+                          onClick={() => approveMutation.mutate(p.project_id)}
+                          disabled={approveMutation.isPending}
+                          className="text-xs px-3 py-1 bg-govres-green text-white rounded-md hover:bg-green-800 disabled:opacity-50"
+                        >
+                          Approve
+                        </button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
-
-        {/* Project List */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          {[
-            {
-              name: 'Kumasi Inner Ring Road — Phase 2',
-              contractor: 'RoadMaster Construction Ltd',
-              budget: 'GH¢24,500,000',
-              disbursed: 'GH¢18,400,000',
-              progress: 75,
-              status: 'active',
-              region: 'Ashanti',
-            },
-            {
-              name: 'Tamale-Bolgatanga Highway Rehabilitation',
-              contractor: 'Highway Masters Ghana',
-              budget: 'GH¢45,600,000',
-              disbursed: 'GH¢22,800,000',
-              progress: 50,
-              status: 'active',
-              region: 'Northern',
-            },
-            {
-              name: 'Cape Coast Bypass Road',
-              contractor: 'BuildCo International',
-              budget: 'GH¢18,200,000',
-              disbursed: 'GH¢5,460,000',
-              progress: 30,
-              status: 'active',
-              region: 'Central',
-            },
-            {
-              name: 'Volta Bridge Expansion',
-              contractor: 'BridgeTech Ltd',
-              budget: 'GH¢32,000,000',
-              disbursed: 'GH¢0',
-              progress: 0,
-              status: 'pending_approval',
-              region: 'Volta',
-            },
-          ].map((project, i) => (
-            <div key={i} style={cardStyle}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
-                <div>
-                  <h4 style={{ margin: 0, fontSize: '16px' }}>{project.name}</h4>
-                  <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#888' }}>
-                    {project.contractor} • {project.region} Region
-                  </p>
-                </div>
-                <span style={{
-                  padding: '4px 12px',
-                  borderRadius: '6px',
-                  fontSize: '12px',
-                  fontWeight: 500,
-                  background: project.status === 'active' ? '#e8f5e9' : '#fff3e0',
-                  color: project.status === 'active' ? '#2e7d32' : '#e65100',
-                }}>
-                  {project.status === 'active' ? 'Active' : 'Pending Approval'}
-                </span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '14px' }}>
-                <span>Disbursed: <strong>{project.disbursed}</strong> of {project.budget}</span>
-                <span style={{ fontWeight: 600 }}>{project.progress}%</span>
-              </div>
-              <div style={{ background: '#f0f0f0', borderRadius: '4px', height: '6px' }}>
-                <div style={{
-                  background: project.status === 'active' ? '#006B3F' : '#ccc',
-                  borderRadius: '4px',
-                  height: '6px',
-                  width: `${project.progress}%`,
-                }}></div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </main>
-    </div>
+      </div>
+    </DashboardLayout>
   );
 }

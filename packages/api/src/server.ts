@@ -16,6 +16,7 @@ import { SYSTEM } from '@govres/shared';
 import { logger } from './utils/logger';
 import { errorHandler } from './middleware/error-handler';
 import { authMiddleware } from './middleware/auth';
+import { testConnection } from './database/connection';
 
 // Routes
 import { ledgerRoutes } from './routes/ledger';
@@ -31,7 +32,7 @@ import { authRoutes } from './routes/auth';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.API_PORT || process.env.PORT || 4000;
 
 // ─── Security Middleware ────────────────────────────────────────
 
@@ -51,7 +52,7 @@ app.use(helmet({
 }));
 
 app.use(cors({
-  origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:5173'],
+  origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000', 'http://localhost:5173'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Request-ID'],
   credentials: true,
@@ -103,10 +104,18 @@ app.use(errorHandler);
 
 // ─── Start Server ───────────────────────────────────────────────
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   logger.info(`GOVRES API server running on port ${PORT}`);
   logger.info('Government Reserve & Settlement Ledger — Bank of Ghana');
   logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  
+  // Test database connection
+  const dbConnected = await testConnection();
+  if (dbConnected) {
+    logger.info('Database connected successfully');
+  } else {
+    logger.warn('Database not available — API routes will return errors for DB-dependent operations');
+  }
 });
 
 export default app;

@@ -1,102 +1,85 @@
 /**
  * GOVRES — Login Page
+ * Real authentication with API integration and Tailwind CSS.
  */
 
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth, getRoleDashboard } from '../lib/auth';
 
 export function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const { login, loading } = useAuth();
+  const navigate = useNavigate();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Call /api/v1/auth/login
-    console.log('Login:', { email });
+    setError('');
+    try {
+      await login(email, password);
+      const stored = localStorage.getItem('govres_user');
+      const user = stored ? JSON.parse(stored) : null;
+      navigate(user ? getRoleDashboard(user.role) : '/');
+    } catch (err: any) {
+      setError(err.response?.data?.error?.message || 'Login failed. Check your credentials.');
+    }
   };
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      background: 'linear-gradient(135deg, #1A1A2E 0%, #16213E 50%, #0F3460 100%)',
-    }}>
-      <div style={{
-        background: '#fff',
-        borderRadius: '16px',
-        padding: '48px',
-        width: '100%',
-        maxWidth: '420px',
-        boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
-      }}>
-        <h1 style={{ textAlign: 'center', margin: '0 0 8px' }}>
-          <span style={{ color: '#D4AF37' }}>GOVRES</span>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-govres-black via-govres-navy to-govres-blue">
+      <div className="bg-white rounded-2xl p-12 w-full max-w-md shadow-2xl">
+        <h1 className="text-center text-3xl font-bold mb-1">
+          <span className="text-govres-gold">GOVRES</span>
         </h1>
-        <p style={{ textAlign: 'center', color: '#666', margin: '0 0 32px', fontSize: '14px' }}>
+        <p className="text-center text-gray-500 text-sm mb-8">
           Government Reserve & Settlement Ledger
         </p>
 
-        <form onSubmit={handleLogin}>
-          <div style={{ marginBottom: '20px' }}>
-            <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, marginBottom: '6px' }}>
-              Email
-            </label>
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm mb-6">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleLogin} className="space-y-5">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
             <input
               type="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
               placeholder="you@bog.gov.gh"
-              style={{
-                width: '100%',
-                padding: '12px',
-                border: '1px solid #ddd',
-                borderRadius: '8px',
-                fontSize: '14px',
-                boxSizing: 'border-box',
-              }}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-govres-green focus:border-transparent"
               required
             />
           </div>
-          <div style={{ marginBottom: '24px' }}>
-            <label style={{ display: 'block', fontSize: '14px', fontWeight: 500, marginBottom: '6px' }}>
-              Password
-            </label>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
             <input
               type="password"
               value={password}
               onChange={e => setPassword(e.target.value)}
               placeholder="••••••••"
-              style={{
-                width: '100%',
-                padding: '12px',
-                border: '1px solid #ddd',
-                borderRadius: '8px',
-                fontSize: '14px',
-                boxSizing: 'border-box',
-              }}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-govres-green focus:border-transparent"
               required
             />
           </div>
           <button
             type="submit"
-            style={{
-              width: '100%',
-              padding: '14px',
-              background: '#006B3F',
-              color: '#fff',
-              border: 'none',
-              borderRadius: '8px',
-              fontSize: '16px',
-              fontWeight: 600,
-              cursor: 'pointer',
-            }}
+            disabled={loading}
+            className="w-full py-3.5 bg-govres-green text-white rounded-lg text-base font-semibold hover:bg-green-800 transition-colors disabled:opacity-50"
           >
-            Sign In
+            {loading ? 'Signing in…' : 'Sign In'}
           </button>
         </form>
 
-        <p style={{ textAlign: 'center', marginTop: '24px', fontSize: '12px', color: '#888' }}>
+        <div className="mt-6 text-center text-xs text-gray-400">
+          <p>Demo: admin@bog.gov.gh / govres2025</p>
+        </div>
+
+        <p className="text-center mt-6 text-xs text-gray-400">
           Authorized access only • Bank of Ghana
         </p>
       </div>

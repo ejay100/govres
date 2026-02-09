@@ -1,7 +1,7 @@
 /**
  * GOVRES — Contractor Payment Flow Simulation
- * Simulates: Budget allocation → Project creation → Milestone disbursement → Bank settlement → Cash-out
- * Models government expenditure through GBDC rails
+ * Simulates: Budget allocation → GBDC mint → Contractor disbursement → Bank settlement
+ * Uses real LedgerEngine API signatures.
  */
 
 import { LedgerEngine } from '@govres/ledger';
@@ -26,9 +26,6 @@ interface ContractorSimResult {
   gbdcTurnover: number;
 }
 
-/**
- * Sample government infrastructure projects (realistic Ghanaian context)
- */
 const SAMPLE_PROJECTS: ProjectSimConfig[] = [
   {
     name: 'Accra-Tema Motorway Extension',
@@ -89,40 +86,21 @@ const SAMPLE_PROJECTS: ProjectSimConfig[] = [
   },
 ];
 
-/**
- * Simulate government contractor payment flows
- */
 export async function simulateContractorPayments(options: {
   projectsToSimulate?: number;
-  milestoneCompletionRate: number; // 0-1, what fraction of milestones to complete
+  milestoneCompletionRate: number;
 }): Promise<ContractorSimResult> {
-  const ledger = new LedgerEngine();
-  await ledger.initialize();
+  const ledger = new LedgerEngine('sim-contractor-validator');
+  ledger.initialize();
 
   const startTime = Date.now();
 
-  // Register system accounts
-  ledger.registerAccount({
-    accountId: 'bog-reserve',
-    organizationId: 'bog',
-    role: UserRole.BOG_ADMIN,
-    label: 'Bank of Ghana Reserve',
-  });
-
-  ledger.registerAccount({
-    accountId: 'mof-treasury',
-    organizationId: 'mof',
-    role: UserRole.GOV_AGENCY,
-    label: 'Ministry of Finance Treasury',
-  });
+  // BoG accounts auto-registered by initialize()
+  // Register MoF treasury
+  ledger.registerAccount('mof-treasury', UserRole.GOVT_AGENCY);
 
   // Seed gold reserve for GBDC minting capacity
-  ledger.registerGoldReserve({
-    barId: 'sim-gold-reserve',
-    weightGrams: 500_000, // 500kg
-    purity: 0.999,
-    attestationId: 'sim-attest-gold',
-  });
+  ledger.registerGoldReserve(500_000, 'sim-gold-reserve-attest');
 
   let totalDisbursed = 0;
   let totalMilestonesCompleted = 0;
@@ -133,38 +111,19 @@ export async function simulateContractorPayments(options: {
   const projects = SAMPLE_PROJECTS.slice(0, options.projectsToSimulate ?? SAMPLE_PROJECTS.length);
 
   for (const project of projects) {
-    // Register contractor account
     const contractorId = `ctr-${project.contractor.toLowerCase().replace(/\s+/g, '-').slice(0, 20)}`;
-    ledger.registerAccount({
-      accountId: contractorId,
-      organizationId: contractorId,
-      role: UserRole.CONTRACTOR,
-      label: project.contractor,
-    });
+    try { ledger.registerAccount(contractorId, UserRole.CONTRACTOR); } catch { /* exists */ }
 
-    // Register bank for settlement
     const bankId = `bank-${project.region.toLowerCase().replace(/\s+/g, '-')}`;
-    try {
-      ledger.registerAccount({
-        accountId: bankId,
-        organizationId: bankId,
-        role: UserRole.BANK_ADMIN,
-        label: `Settlement Bank — ${project.region}`,
-      });
-    } catch {
-      // Bank may already exist from a previous project
-    }
+    try { ledger.registerAccount(bankId, UserRole.COMMERCIAL_BANK); } catch { /* exists */ }
 
     console.log(`\n  Project: ${project.name}`);
     console.log(`  Budget:  GH¢${project.totalBudget.toLocaleString()}`);
     console.log(`  Region:  ${project.region}`);
 
-    // Process milestones
-    for (let mi = 0; mi < project.milestones.length; mi++) {
+    for (const milestone of project.milestones) {
       totalMilestones++;
-      const milestone = project.milestones[mi];
 
-      // Check if this milestone should be "completed" based on rate
       if (Math.random() > options.milestoneCompletionRate) {
         console.log(`    ○ ${milestone.name} — pending`);
         continue;
@@ -173,18 +132,24 @@ export async function simulateContractorPayments(options: {
       totalMilestonesCompleted++;
       const amount = Math.round(project.totalBudget * milestone.percentOfBudget);
 
-      // Mint GBDC for disbursement (BoG → Treasury → Contractor → Bank)
-      const gbdc = ledger.mintGBDC({
-        amount,
-        authorizedBy: 'bog-reserve',
-        purpose: `${project.name} — ${milestone.name}`,
+      // Mint GBDC for disbursement
+      const instrumentId = ledger.mintGBDC({
+        amountCedi: amount,
+        goldBackingGrams: amount * 0.001, // notional backing
+        goldPricePerGramUSD: 85,
+        exchangeRateUSDGHS: 14.75,
+        issuanceId: `issuance-${project.name}-${milestone.name}`.replace(/\s+/g, '-'),
+        issuedBy: 'BOG_TREASURY',
       });
 
       // Transfer to contractor
-      ledger.transferGBDC(gbdc.instrumentId, 'bog-reserve', contractorId);
-
-      // Contractor redeems at bank
-      ledger.redeemGBDC(gbdc.instrumentId, contractorId);
+      ledger.transferGBDC({
+        instrumentId,
+        fromAccount: 'BOG_TREASURY',
+        toAccount: contractorId,
+        amountCedi: amount,
+        description: `${project.name} — ${milestone.name}`,
+      });
 
       totalDisbursed += amount;
       gbdcTurnover += amount;
@@ -207,17 +172,12 @@ export async function simulateContractorPayments(options: {
   };
 }
 
-/**
- * Run simulation
- */
 async function main() {
   console.log('═══════════════════════════════════════════════════');
   console.log('  GOVRES — Contractor Payment Flow Simulation');
   console.log('═══════════════════════════════════════════════════');
 
-  const result = await simulateContractorPayments({
-    milestoneCompletionRate: 0.70,
-  });
+  const result = await simulateContractorPayments({ milestoneCompletionRate: 0.70 });
 
   console.log('\n───────────────────────────────────────────────────');
   console.log('Simulation Results:');

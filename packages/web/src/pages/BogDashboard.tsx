@@ -1,275 +1,237 @@
 /**
- * GOVRES — Bank of Ghana Dashboard
- * Central bank oversight: reserve monitoring, GBDC issuance, compliance, oracle status
+ * GOVRES — Bank of Ghana Admin Dashboard
+ * Full reserve monitoring, oracle status, GBDC minting, and ledger view.
  */
 
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { DashboardLayout } from '../components/DashboardLayout';
+import { dashboardAPI, gbdcAPI, oracleAPI, ledgerAPI } from '../lib/api';
 
-interface ReserveData {
-  goldGrams: number;
-  goldValueUSD: number;
-  cocoaKg: number;
-  cocoaValueGHS: number;
-  gbdcCirculation: number;
-  crdnOutstanding: number;
-  backingRatio: number;
-  multiplier: number;
+function StatCard({ label, value, sub, accent }: { label: string; value: string; sub?: string; accent: string }) {
+  return (
+    <div className={`bg-white rounded-xl p-5 shadow-sm border-t-4 ${accent}`}>
+      <p className="text-xs text-gray-500 uppercase tracking-wide">{label}</p>
+      <p className="text-2xl font-bold mt-1">{value}</p>
+      {sub && <p className="text-xs text-gray-400 mt-1">{sub}</p>}
+    </div>
+  );
 }
 
-const mockReserve: ReserveData = {
-  goldGrams: 8_809_000,
-  goldValueUSD: 632_000_000,
-  cocoaKg: 450_000_000,
-  cocoaValueGHS: 44_950_000_000,
-  gbdcCirculation: 1_580_000_000,
-  crdnOutstanding: 34_200_000_000,
-  backingRatio: 1.12,
-  multiplier: 2.5,
-};
-
-const cardStyle: React.CSSProperties = {
-  background: '#fff',
-  borderRadius: '12px',
-  padding: '24px',
-  boxShadow: '0 2px 12px rgba(0,0,0,0.06)',
-};
-
-const sectionTitle: React.CSSProperties = {
-  fontSize: '18px',
-  fontWeight: 600,
-  marginBottom: '16px',
-  color: '#1A1A2E',
-};
+const fmt = (n: number | undefined) => n != null ? new Intl.NumberFormat('en-GH').format(n) : '—';
+const fmtCedi = (n: number | undefined) =>
+  n != null ? `GH₵ ${new Intl.NumberFormat('en-GH', { minimumFractionDigits: 2 }).format(n)}` : '—';
 
 export function BogDashboard() {
-  const [mintAmount, setMintAmount] = useState('');
+  const qc = useQueryClient();
+
+  // ── Data Queries ──
+  const { data: reserves } = useQuery({ queryKey: ['reserves'], queryFn: dashboardAPI.reserves, refetchInterval: 15_000 });
+  const { data: metrics } = useQuery({ queryKey: ['metrics'], queryFn: dashboardAPI.metrics, refetchInterval: 15_000 });
+  const { data: goldData } = useQuery({ queryKey: ['gold-detail'], queryFn: dashboardAPI.gold });
+  const { data: recentTx } = useQuery({ queryKey: ['recent-tx'], queryFn: () => ledgerAPI.recentTransactions() });
+  const { data: ledgerStatus } = useQuery({ queryKey: ['ledger-status'], queryFn: ledgerAPI.status });
+
+  const r = reserves?.data;
+  const m = metrics?.data;
+  const gold = goldData?.data;
+  const txList = recentTx?.data?.transactions ?? [];
+  const ls = ledgerStatus?.data;
+
+  // ── Mint GBDC Form ──
+  const [mintForm, setMintForm] = useState({ amountCedi: '', goldBackingGrams: '', description: '' });
+  const mintMutation = useMutation({
+    mutationFn: (data: { amountCedi: number; goldBackingGrams: number; description: string }) =>
+      gbdcAPI.mint(data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['reserves'] });
+      qc.invalidateQueries({ queryKey: ['recent-tx'] });
+      setMintForm({ amountCedi: '', goldBackingGrams: '', description: '' });
+    },
+  });
+
+  const handleMint = (e: React.FormEvent) => {
+    e.preventDefault();
+    mintMutation.mutate({
+      amountCedi: Number(mintForm.amountCedi),
+      goldBackingGrams: Number(mintForm.goldBackingGrams),
+      description: mintForm.description || 'GBDC Mint — BoG Dashboard',
+    });
+  };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f5f6fa' }}>
-      {/* Header */}
-      <header style={{
-        background: '#1A1A2E',
-        color: '#fff',
-        padding: '16px 32px',
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-      }}>
-        <div>
-          <h1 style={{ margin: 0, fontSize: '20px' }}>
-            <span style={{ color: '#D4AF37' }}>GOVRES</span> — Central Bank Dashboard
-          </h1>
-          <p style={{ margin: 0, fontSize: '12px', color: '#aaa' }}>Bank of Ghana • Governor's Office</p>
-        </div>
-        <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-          <span style={{
-            background: '#006B3F',
-            padding: '4px 12px',
-            borderRadius: '12px',
-            fontSize: '12px',
-          }}>BoG Admin</span>
-          <a href="/" style={{ color: '#D4AF37', fontSize: '14px', textDecoration: 'none' }}>Public View</a>
-        </div>
-      </header>
+    <DashboardLayout title="BoG Admin Dashboard">
+      {/* ── Top-level Stats ── */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <StatCard label="Gold Reserve (oz)" value={fmt(r?.goldReserve?.totalOunces)} sub={fmtCedi(r?.goldReserve?.valueCedi)} accent="border-govres-gold" />
+        <StatCard label="Cocoa Reserve (MT)" value={fmt(r?.cocoaReserve?.totalTonnes)} sub={fmtCedi(r?.cocoaReserve?.valueCedi)} accent="border-yellow-700" />
+        <StatCard label="GBDC Circulation" value={fmt(r?.gbdcCirculation?.totalInstruments)} sub={fmtCedi(r?.gbdcCirculation?.totalValue)} accent="border-govres-green" />
+        <StatCard label="CRDN Active" value={fmt(r?.crdnCirculation?.totalInstruments)} sub={fmtCedi(r?.crdnCirculation?.totalValue)} accent="border-govres-red" />
+      </div>
 
-      <main style={{ padding: '32px', maxWidth: '1400px', margin: '0 auto' }}>
-        {/* Reserve Overview */}
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px', marginBottom: '32px' }}>
-          <div style={{ ...cardStyle, borderLeft: '4px solid #D4AF37' }}>
-            <p style={{ margin: 0, fontSize: '12px', color: '#888' }}>Gold Reserve</p>
-            <p style={{ margin: '8px 0 0', fontSize: '24px', fontWeight: 700, color: '#D4AF37' }}>
-              {(mockReserve.goldGrams / 1000).toFixed(1)}kg
-            </p>
-            <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#666' }}>
-              ${(mockReserve.goldValueUSD / 1_000_000).toFixed(0)}M USD
-            </p>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* ── Gold Detail & Oracle ── */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Gold Summary */}
+          <div className="bg-white rounded-xl p-6 shadow-sm">
+            <h2 className="font-semibold text-lg mb-4">Gold Vault Summary</h2>
+            <div className="grid grid-cols-3 gap-4 text-sm">
+              <div>
+                <p className="text-gray-500">Total Bars</p>
+                <p className="font-bold text-lg">{fmt(gold?.totalBars)}</p>
+              </div>
+              <div>
+                <p className="text-gray-500">Total Weight (oz)</p>
+                <p className="font-bold text-lg">{fmt(gold?.totalOunces)}</p>
+              </div>
+              <div>
+                <p className="text-gray-500">Valuation</p>
+                <p className="font-bold text-lg">{fmtCedi(gold?.valueCedi)}</p>
+              </div>
+            </div>
           </div>
-          <div style={{ ...cardStyle, borderLeft: '4px solid #8B4513' }}>
-            <p style={{ margin: 0, fontSize: '12px', color: '#888' }}>Cocoa Reserve</p>
-            <p style={{ margin: '8px 0 0', fontSize: '24px', fontWeight: 700, color: '#8B4513' }}>
-              {(mockReserve.cocoaKg / 1_000_000).toFixed(0)}k MT
-            </p>
-            <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#666' }}>
-              GH¢{(mockReserve.cocoaValueGHS / 1_000_000_000).toFixed(1)}B
-            </p>
-          </div>
-          <div style={{ ...cardStyle, borderLeft: '4px solid #006B3F' }}>
-            <p style={{ margin: 0, fontSize: '12px', color: '#888' }}>GBDC in Circulation</p>
-            <p style={{ margin: '8px 0 0', fontSize: '24px', fontWeight: 700, color: '#006B3F' }}>
-              GH¢{(mockReserve.gbdcCirculation / 1_000_000_000).toFixed(2)}B
-            </p>
-            <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#666' }}>
-              Backing: {(mockReserve.backingRatio * 100).toFixed(0)}%
-            </p>
-          </div>
-          <div style={{ ...cardStyle, borderLeft: '4px solid #CE1126' }}>
-            <p style={{ margin: 0, fontSize: '12px', color: '#888' }}>CRDN Outstanding</p>
-            <p style={{ margin: '8px 0 0', fontSize: '24px', fontWeight: 700, color: '#CE1126' }}>
-              GH¢{(mockReserve.crdnOutstanding / 1_000_000_000).toFixed(1)}B
-            </p>
-            <p style={{ margin: '4px 0 0', fontSize: '13px', color: '#666' }}>
-              Multiplier: {mockReserve.multiplier}×
-            </p>
-          </div>
-        </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '24px', marginBottom: '32px' }}>
-          {/* Oracle Status Panel */}
-          <div style={cardStyle}>
-            <h3 style={sectionTitle}>Oracle Attestation Status</h3>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px' }}>
-              <thead>
-                <tr style={{ background: '#f8f9fb' }}>
-                  <th style={{ padding: '10px', textAlign: 'left' }}>Source</th>
-                  <th style={{ padding: '10px', textAlign: 'left' }}>Last Attestation</th>
-                  <th style={{ padding: '10px', textAlign: 'left' }}>Status</th>
-                  <th style={{ padding: '10px', textAlign: 'right' }}>Confidence</th>
-                </tr>
-              </thead>
-              <tbody>
-                {[
-                  { source: 'Precious Minerals (PMMC)', last: '2 min ago', status: 'active', confidence: 99.2 },
-                  { source: 'Cocobod Warehouse — Tema', last: '8 min ago', status: 'active', confidence: 97.8 },
-                  { source: 'Cocobod Warehouse — Takoradi', last: '12 min ago', status: 'active', confidence: 96.5 },
-                  { source: 'BoG Vault — Accra', last: '1 min ago', status: 'active', confidence: 99.9 },
-                  { source: 'GoldBod Royalty Feed', last: '45 min ago', status: 'warning', confidence: 91.0 },
-                ].map((row, i) => (
-                  <tr key={i} style={{ borderBottom: '1px solid #f0f0f0' }}>
-                    <td style={{ padding: '10px' }}>{row.source}</td>
-                    <td style={{ padding: '10px', color: '#666' }}>{row.last}</td>
-                    <td style={{ padding: '10px' }}>
-                      <span style={{
-                        display: 'inline-block',
-                        width: '8px',
-                        height: '8px',
-                        borderRadius: '50%',
-                        background: row.status === 'active' ? '#006B3F' : '#D4AF37',
-                        marginRight: '6px',
-                      }}></span>
-                      {row.status}
-                    </td>
-                    <td style={{ padding: '10px', textAlign: 'right', fontFamily: 'monospace' }}>
-                      {row.confidence.toFixed(1)}%
-                    </td>
+          {/* Ledger Status */}
+          <div className="bg-white rounded-xl p-6 shadow-sm">
+            <h2 className="font-semibold text-lg mb-3">Ledger Status</h2>
+            <div className="grid grid-cols-4 gap-4 text-sm">
+              <div>
+                <p className="text-gray-500">Block Height</p>
+                <p className="font-bold">{fmt(ls?.blockHeight)}</p>
+              </div>
+              <div>
+                <p className="text-gray-500">Transactions</p>
+                <p className="font-bold">{fmt(ls?.totalTransactions)}</p>
+              </div>
+              <div>
+                <p className="text-gray-500">Accounts</p>
+                <p className="font-bold">{fmt(ls?.activeAccounts)}</p>
+              </div>
+              <div>
+                <p className="text-gray-500">Status</p>
+                <span className="inline-block mt-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-green-100 text-green-800">Active</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Recent Transactions */}
+          <div className="bg-white rounded-xl p-6 shadow-sm">
+            <h2 className="font-semibold text-lg mb-3">Recent Transactions</h2>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm text-left">
+                <thead className="text-xs text-gray-500 uppercase border-b">
+                  <tr>
+                    <th className="py-2 pr-4">TX ID</th>
+                    <th className="py-2 pr-4">Type</th>
+                    <th className="py-2 pr-4">Amount</th>
+                    <th className="py-2 pr-4">Status</th>
+                    <th className="py-2">Time</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* GBDC Mint Panel */}
-          <div style={cardStyle}>
-            <h3 style={sectionTitle}>Mint GBDC</h3>
-            <p style={{ fontSize: '13px', color: '#666', marginBottom: '16px' }}>
-              Issue new Gold-Backed Digital Credits backed by verified reserve attestations.
-            </p>
-            <div style={{ marginBottom: '16px' }}>
-              <label style={{ fontSize: '13px', fontWeight: 500 }}>Amount (GH¢)</label>
-              <input
-                type="number"
-                value={mintAmount}
-                onChange={e => setMintAmount(e.target.value)}
-                placeholder="e.g. 10,000,000"
-                style={{
-                  width: '100%',
-                  padding: '10px',
-                  border: '1px solid #ddd',
-                  borderRadius: '8px',
-                  marginTop: '6px',
-                  boxSizing: 'border-box',
-                }}
-              />
+                </thead>
+                <tbody>
+                  {txList.length === 0 ? (
+                    <tr><td colSpan={5} className="py-4 text-center text-gray-400">No transactions yet</td></tr>
+                  ) : (
+                    txList.slice(0, 10).map((tx: any) => (
+                      <tr key={tx.transaction_id} className="border-b last:border-0">
+                        <td className="py-2 pr-4 font-mono text-xs">{tx.transaction_id?.slice(0, 12)}…</td>
+                        <td className="py-2 pr-4">{tx.transaction_type}</td>
+                        <td className="py-2 pr-4">{fmtCedi(tx.amount_cedi)}</td>
+                        <td className="py-2 pr-4">
+                          <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                            tx.status === 'CONFIRMED' ? 'bg-green-100 text-green-800' :
+                            tx.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-600'
+                          }`}>{tx.status}</span>
+                        </td>
+                        <td className="py-2 text-xs text-gray-400">{new Date(tx.created_at).toLocaleString()}</td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
             </div>
-            <div style={{
-              background: '#f8f9fb',
-              borderRadius: '8px',
-              padding: '12px',
-              marginBottom: '16px',
-              fontSize: '13px',
-            }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                <span>Gold backing required</span>
-                <span style={{ fontFamily: 'monospace' }}>
-                  {mintAmount ? (Number(mintAmount) * 0.10 / 71.80).toFixed(2) : '—'} g
-                </span>
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <span>Reserve allocation (10%)</span>
-                <span style={{ fontFamily: 'monospace' }}>
-                  GH¢{mintAmount ? (Number(mintAmount) * 0.10).toLocaleString() : '—'}
-                </span>
-              </div>
-            </div>
-            <button
-              style={{
-                width: '100%',
-                padding: '12px',
-                background: '#006B3F',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '8px',
-                fontWeight: 600,
-                cursor: 'pointer',
-              }}
-            >
-              Mint GBDC
-            </button>
           </div>
         </div>
 
-        {/* Recent Ledger Transactions */}
-        <div style={cardStyle}>
-          <h3 style={sectionTitle}>Recent Ledger Transactions</h3>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px' }}>
-            <thead>
-              <tr style={{ background: '#f8f9fb' }}>
-                <th style={{ padding: '10px', textAlign: 'left' }}>Tx ID</th>
-                <th style={{ padding: '10px', textAlign: 'left' }}>Type</th>
-                <th style={{ padding: '10px', textAlign: 'left' }}>From → To</th>
-                <th style={{ padding: '10px', textAlign: 'right' }}>Amount</th>
-                <th style={{ padding: '10px', textAlign: 'left' }}>Status</th>
-                <th style={{ padding: '10px', textAlign: 'left' }}>Time</th>
-              </tr>
-            </thead>
-            <tbody>
-              {[
-                { id: '0xa3f1…cd9e', type: 'GBDC_MINT', flow: 'BoG → Reserve', amount: 'GH¢5,000,000', status: 'confirmed', time: '14:32' },
-                { id: '0xb7c2…e412', type: 'CRDN_ISSUE', flow: 'CocoB → Farmer', amount: 'GH¢124,800', status: 'confirmed', time: '14:28' },
-                { id: '0xd9a4…f891', type: 'SETTLEMENT', flow: 'GCB → Contractor', amount: 'GH¢2,340,000', status: 'pending', time: '14:25' },
-                { id: '0xe5b1…a023', type: 'GBDC_TRANSFER', flow: 'Stanbic → CalBank', amount: 'GH¢890,000', status: 'confirmed', time: '14:21' },
-                { id: '0xf2d8…b765', type: 'CRDN_CONVERT', flow: 'Farmer → MoMo', amount: 'GH¢8,450', status: 'confirmed', time: '14:18' },
-              ].map((tx, i) => (
-                <tr key={i} style={{ borderBottom: '1px solid #f0f0f0' }}>
-                  <td style={{ padding: '10px', fontFamily: 'monospace', fontSize: '12px' }}>{tx.id}</td>
-                  <td style={{ padding: '10px' }}>
-                    <span style={{
-                      background: tx.type.startsWith('GBDC') ? '#e8f5e9' : tx.type.startsWith('CRDN') ? '#fff3e0' : '#e3f2fd',
-                      color: tx.type.startsWith('GBDC') ? '#2e7d32' : tx.type.startsWith('CRDN') ? '#e65100' : '#1565c0',
-                      padding: '2px 8px',
-                      borderRadius: '4px',
-                      fontSize: '12px',
-                    }}>{tx.type}</span>
-                  </td>
-                  <td style={{ padding: '10px', color: '#666' }}>{tx.flow}</td>
-                  <td style={{ padding: '10px', textAlign: 'right', fontFamily: 'monospace' }}>{tx.amount}</td>
-                  <td style={{ padding: '10px' }}>
-                    <span style={{
-                      display: 'inline-block',
-                      width: '8px',
-                      height: '8px',
-                      borderRadius: '50%',
-                      background: tx.status === 'confirmed' ? '#006B3F' : '#D4AF37',
-                      marginRight: '6px',
-                    }}></span>
-                    {tx.status}
-                  </td>
-                  <td style={{ padding: '10px', color: '#888' }}>{tx.time}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        {/* ── Right Sidebar — Mint GBDC ── */}
+        <div className="space-y-6">
+          <div className="bg-white rounded-xl p-6 shadow-sm">
+            <h2 className="font-semibold text-lg mb-4">Mint GBDC</h2>
+            <form onSubmit={handleMint} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Amount (GH₵)</label>
+                <input
+                  type="number"
+                  step="0.01"
+                  value={mintForm.amountCedi}
+                  onChange={e => setMintForm(p => ({ ...p, amountCedi: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-govres-green"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Gold Backing (grams)</label>
+                <input
+                  type="number"
+                  step="0.001"
+                  value={mintForm.goldBackingGrams}
+                  onChange={e => setMintForm(p => ({ ...p, goldBackingGrams: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-govres-green"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                <input
+                  type="text"
+                  value={mintForm.description}
+                  onChange={e => setMintForm(p => ({ ...p, description: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                  placeholder="Issuance note"
+                />
+              </div>
+
+              {mintMutation.isError && (
+                <p className="text-sm text-red-600">{(mintMutation.error as any)?.response?.data?.error?.message || 'Mint failed'}</p>
+              )}
+              {mintMutation.isSuccess && (
+                <p className="text-sm text-green-600">GBDC minted successfully ✓</p>
+              )}
+
+              <button
+                type="submit"
+                disabled={mintMutation.isPending}
+                className="w-full py-2.5 bg-govres-green text-white rounded-lg font-medium hover:bg-green-800 transition disabled:opacity-50"
+              >
+                {mintMutation.isPending ? 'Processing…' : 'Mint GBDC'}
+              </button>
+            </form>
+          </div>
+
+          {/* System Uptime */}
+          <div className="bg-white rounded-xl p-6 shadow-sm">
+            <h2 className="font-semibold text-lg mb-3">System Health</h2>
+            <div className="space-y-3 text-sm">
+              <div className="flex justify-between">
+                <span className="text-gray-500">Block Height</span>
+                <span className="font-medium">{fmt(m?.blockHeight)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Uptime</span>
+                <span className="font-medium">{m?.uptimeHours ? `${m.uptimeHours}h` : '—'}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Active Accounts</span>
+                <span className="font-medium">{fmt(m?.activeAccounts)}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Settlements</span>
+                <span className="font-medium">{fmt(m?.settlementsCompleted)}</span>
+              </div>
+            </div>
+          </div>
         </div>
-      </main>
-    </div>
+      </div>
+    </DashboardLayout>
   );
 }
