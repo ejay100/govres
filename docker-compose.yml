@@ -1,0 +1,60 @@
+version: "3.9"
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: govres-db
+    environment:
+      POSTGRES_DB: govres
+      POSTGRES_USER: govres_admin
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-govres_dev_password}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U govres_admin -d govres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # API Server
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: govres-api
+    ports:
+      - "4000:4000"
+    environment:
+      NODE_ENV: development
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: govres
+      DB_USER: govres_admin
+      DB_PASSWORD: ${DB_PASSWORD:-govres_dev_password}
+      JWT_SECRET: ${JWT_SECRET:-dev_jwt_secret_change_in_production}
+      API_PORT: 4000
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./packages:/app/packages
+      - ./logs:/app/logs
+
+  # Web Frontend
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    container_name: govres-web
+    ports:
+      - "3000:3000"
+    environment:
+      VITE_API_URL: http://localhost:4000
+    depends_on:
+      - api
+
+volumes:
+  pgdata:

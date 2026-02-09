@@ -1,0 +1,178 @@
+name: GOVRES CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  # ─────────────────────────────────────────
+  # Lint & Type Check
+  # ─────────────────────────────────────────
+  lint:
+    name: Lint & Type Check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: TypeScript compile check
+        run: npx tsc --noEmit --project tsconfig.json
+        continue-on-error: true
+
+  # ─────────────────────────────────────────
+  # Build all packages
+  # ─────────────────────────────────────────
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build shared package
+        run: npm run build --workspace=packages/shared --if-present
+
+      - name: Build ledger package
+        run: npm run build --workspace=packages/ledger --if-present
+
+      - name: Build oracle package
+        run: npm run build --workspace=packages/oracle --if-present
+
+      - name: Build security package
+        run: npm run build --workspace=packages/security --if-present
+
+      - name: Build API
+        run: npm run build --workspace=packages/api --if-present
+
+      - name: Build Web Frontend
+        run: npm run build --workspace=packages/web --if-present
+
+      - name: Upload web build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-dist
+          path: packages/web/dist
+          if-no-files-found: ignore
+
+  # ─────────────────────────────────────────
+  # Test
+  # ─────────────────────────────────────────
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    needs: build
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: govres_test
+          POSTGRES_USER: govres_admin
+          POSTGRES_PASSWORD: test_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm test --if-present
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_NAME: govres_test
+          DB_USER: govres_admin
+          DB_PASSWORD: test_password
+          JWT_SECRET: test_jwt_secret
+          NODE_ENV: test
+
+  # ─────────────────────────────────────────
+  # Security Audit
+  # ─────────────────────────────────────────
+  security:
+    name: Security Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run npm audit
+        run: npm audit --audit-level=high
+        continue-on-error: true
+
+  # ─────────────────────────────────────────
+  # Deploy (main branch only)
+  # ─────────────────────────────────────────
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: [build, test]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download web build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: web-dist
+          path: packages/web/dist
+        continue-on-error: true
+
+      - name: Deploy notification
+        run: |
+          echo "═══════════════════════════════════════════════════"
+          echo "  GOVRES — Deployment Triggered"
+          echo "  Branch: ${{ github.ref_name }}"
+          echo "  Commit: ${{ github.sha }}"
+          echo "  Actor:  ${{ github.actor }}"
+          echo "═══════════════════════════════════════════════════"
+          echo ""
+          echo "Deployment targets can be configured:"
+          echo "  • AWS ECS / EC2 — Add AWS credentials to secrets"
+          echo "  • DigitalOcean App Platform — Add DO token"
+          echo "  • Railway / Render — Add deploy hooks"
+          echo "  • Self-hosted — Add SSH keys and deploy script"

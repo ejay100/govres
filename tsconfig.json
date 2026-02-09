@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "commonjs",
+    "lib": ["ES2022"],
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "moduleResolution": "node",
+    "paths": {
+      "@govres/shared": ["./packages/shared/src"],
+      "@govres/ledger": ["./packages/ledger/src"],
+      "@govres/oracle": ["./packages/oracle/src"],
+      "@govres/api": ["./packages/api/src"],
+      "@govres/simulation": ["./packages/simulation/src"]
+    }
+  },
+  "exclude": ["node_modules", "dist"]
+}

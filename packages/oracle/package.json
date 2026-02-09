@@ -1,0 +1,14 @@
+{
+  "name": "@govres/oracle",
+  "version": "1.0.0",
+  "description": "Oracle layer for GOVRES — Gold vault sensors, cocoa warehouse verification, and royalty feeds",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@govres/shared": "1.0.0"
+  }
+}

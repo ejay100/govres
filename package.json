@@ -1,0 +1,33 @@
+{
+  "name": "govres",
+  "version": "1.0.0",
+  "description": "GOVRES — Government Reserve & Settlement Ledger. A programmable reserve ledger for gold, cocoa, and sovereign settlement with CBDC integration for the Bank of Ghana.",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "dev:api": "npm run dev --workspace=packages/api",
+    "dev:web": "npm run dev --workspace=packages/web",
+    "test": "npm run test --workspaces",
+    "lint": "eslint . --ext .ts,.tsx",
+    "db:migrate": "npm run migrate --workspace=packages/api",
+    "db:seed": "npm run seed --workspace=packages/api",
+    "simulate": "npm run simulate --workspace=packages/simulation"
+  },
+  "keywords": [
+    "govres",
+    "gbdc",
+    "crdn",
+    "bank-of-ghana",
+    "cbdc",
+    "ecedi",
+    "gold-backed",
+    "cocoa-receipt",
+    "settlement-ledger",
+    "reserve-ledger"
+  ],
+  "author": "Northlands Systems",
+  "license": "PROPRIETARY"
+}

@@ -1,0 +1,11 @@
+{
+  "name": "@govres/shared",
+  "version": "1.0.0",
+  "description": "Shared types, constants, and utilities for GOVRES",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest"
+  }
+}

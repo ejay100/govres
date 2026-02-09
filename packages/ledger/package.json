@@ -1,0 +1,14 @@
+{
+  "name": "@govres/ledger",
+  "version": "1.0.0",
+  "description": "Core permissioned ledger engine for GOVRES — GBDC & CRDN lifecycle management",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@govres/shared": "1.0.0"
+  }
+}
