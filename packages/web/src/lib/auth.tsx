@@ -22,6 +22,7 @@ interface AuthContextType {
   token: string | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
+  signup: (data: { email: string; fullName: string; phone?: string; role: string; password: string; confirmPassword: string }) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
 }
@@ -92,8 +93,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem('govres_user');
   };
 
+  const signup = async (data: { email: string; fullName: string; phone?: string; role: string; password: string; confirmPassword: string }) => {
+    setLoading(true);
+    try {
+      const res = await authAPI.signup(data);
+      const { token: newToken, user: userData } = res.data.data;
+      const authUser: AuthUser = {
+        userId: userData.userId,
+        accountId: userData.accountId,
+        role: userData.role,
+        fullName: userData.fullName,
+        email: userData.email,
+        organizationId: userData.organizationId || '',
+        organizationName: userData.organizationName || '',
+        kycVerified: userData.kycVerified,
+      };
+      setToken(newToken);
+      setUser(authUser);
+      localStorage.setItem('govres_token', newToken);
+      localStorage.setItem('govres_user', JSON.stringify(authUser));
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, logout, isAuthenticated: !!token }}>
+    <AuthContext.Provider value={{ user, token, loading, login, signup, logout, isAuthenticated: !!token }}>
       {children}
     </AuthContext.Provider>
   );

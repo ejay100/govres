@@ -5,6 +5,7 @@
   "description": "GOVRES simulation, analytics & stress testing",
   "main": "src/index.ts",
   "scripts": {
+    "build": "tsc --noEmit",
     "simulate": "tsx src/index.ts",
     "simulate:cocoa": "tsx src/cocoa-flow.ts",
     "simulate:contractor": "tsx src/contractor-flow.ts",

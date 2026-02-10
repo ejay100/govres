@@ -4,6 +4,7 @@
  */
 
 import { useQuery } from '@tanstack/react-query';
+import { Navbar } from '../components/Navbar';
 import { dashboardAPI } from '../lib/api';
 
 function StatCard({ label, value, sub, color }: { label: string; value: string; sub?: string; color: string }) {
@@ -39,8 +40,10 @@ export function PublicDashboard() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Navbar />
+
       {/* Hero */}
-      <header className="bg-gradient-to-r from-govres-black via-govres-navy to-govres-blue text-white">
+      <header className="pt-16 bg-gradient-to-r from-govres-black via-govres-navy to-govres-blue text-white">
         <div className="max-w-7xl mx-auto px-6 py-12">
           <h1 className="text-3xl font-bold">
             <span className="text-govres-gold">GOVRES</span>{' '}

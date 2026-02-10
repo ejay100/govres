@@ -4,6 +4,20 @@
  * Seed data for development and testing.
  * Creates sample organizations, users, and initial records.
  * Uses bcrypt for proper password hashing.
+ *
+ * Default login credentials for every role:
+ * ──────────────────────────────────────────────────────────
+ * Role              Email                       Password
+ * ──────────────────────────────────────────────────────────
+ * BOG_ADMIN         admin@bog.gov.gh            govres2025
+ * BOG_AUDITOR       auditor@bog.gov.gh          govres2025
+ * GOVT_AGENCY       officer@mof.gov.gh          govres2025
+ * COMMERCIAL_BANK   settlement@gcbbank.com.gh   govres2025
+ * LBC               clerk@pbc.com.gh            govres2025
+ * FARMER            kwame@example.com           govres2025
+ * CONTRACTOR        info@northgate.com.gh       govres2025
+ * DIASPORA          kofi.asante@email.com       govres2025
+ * ──────────────────────────────────────────────────────────
  */
 
 import bcrypt from 'bcryptjs';
@@ -44,8 +58,12 @@ INSERT INTO user_accounts (account_id, organization_id, role, full_name, email, 
    'GOVRES Auditor', 'auditor@bog.gov.gh', '+233302666175', '${devHash}'),
   ('MOF-001', (SELECT id FROM organizations WHERE org_code = 'MOF'), 'GOVT_AGENCY',
    'Ministry of Finance Officer', 'officer@mof.gov.gh', '+233302000001', '${devHash}'),
+  ('MRH-001', (SELECT id FROM organizations WHERE org_code = 'MRH'), 'GOVT_AGENCY',
+   'Ministry of Roads Officer', 'roads@mrh.gov.gh', '+233302000003', '${devHash}'),
   ('GCB-001', (SELECT id FROM organizations WHERE org_code = 'GCB'), 'COMMERCIAL_BANK',
    'GCB Settlement Officer', 'settlement@gcbbank.com.gh', '+233302000002', '${devHash}'),
+  ('ECO-001', (SELECT id FROM organizations WHERE org_code = 'ECO'), 'COMMERCIAL_BANK',
+   'Ecobank Settlement Officer', 'settlement@ecobank.com.gh', '+233302000004', '${devHash}'),
   ('LBC001-001', (SELECT id FROM organizations WHERE org_code = 'LBC001'), 'LBC',
    'PBC Purchase Clerk', 'clerk@pbc.com.gh', '+233200000001', '${devHash}'),
   ('FARMER-001', NULL, 'FARMER',
@@ -62,10 +80,12 @@ ON CONFLICT (account_id) DO NOTHING;
 INSERT INTO account_balances (account_id, gbdc_balance, crdn_balance) VALUES
   ('BOG-ADMIN-001', 0, 0),
   ('GCB-001', 0, 0),
+  ('ECO-001', 0, 0),
   ('LBC001-001', 0, 0),
   ('FARMER-001', 0, 0),
   ('FARMER-002', 0, 0),
-  ('CONTRACTOR-001', 0, 0)
+  ('CONTRACTOR-001', 0, 0),
+  ('DIASPORA-001', 0, 0)
 ON CONFLICT (account_id) DO NOTHING;
 
 -- Genesis block

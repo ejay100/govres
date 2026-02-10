@@ -10,7 +10,9 @@
     "build": "npm run build --workspaces",
     "dev:api": "npm run dev --workspace=packages/api",
     "dev:web": "npm run dev --workspace=packages/web",
-    "test": "npm run test --workspaces",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
     "lint": "eslint . --ext .ts,.tsx",
     "db:migrate": "npm run migrate --workspace=packages/api",
     "db:seed": "npm run seed --workspace=packages/api",
@@ -32,7 +34,9 @@
   "license": "PROPRIETARY",
   "devDependencies": {
     "@types/node": "^20.10.0",
+    "@vitest/coverage-v8": "^4.0.18",
     "tsx": "^4.7.0",
-    "typescript": "^5.3.3"
+    "typescript": "^5.3.3",
+    "vitest": "^4.0.18"
   }
 }
