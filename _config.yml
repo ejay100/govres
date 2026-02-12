@@ -1,0 +1,13 @@
+theme: jekyll-theme-cayman
+title: "GOVRES — Government Reserve & Settlement Ledger"
+description: "A programmable reserve ledger for gold-backed and cocoa-receipt-backed digital instruments, designed for the Bank of Ghana."
+show_downloads: true
+google_analytics:
+plugins:
+  - jekyll-relative-links
+relative_links:
+  enabled: true
+  collections: true
+include:
+  - README.md
+  - Whitepaper.md
