@@ -154,6 +154,12 @@ npm run simulate:stress        # Ledger stress test
 
 We welcome pull requests! See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, coding standards, and review expectations.
 
+## Community & Support
+
+- **Ideas / roadmap debates:** Use [GitHub Discussions](https://github.com/ejay100/govres/discussions) to propose features, coordinate working groups, or share research.
+- **Bugs / tasks:** Open [GitHub Issues](https://github.com/ejay100/govres/issues) with reproducible details and label appropriately (`bug`, `feature`, `compliance`, etc.).
+- **Announcements:** Reuse or adapt the messaging in [docs/OpenSourceAnnouncement.md](docs/OpenSourceAnnouncement.md) when sharing GOVRES with partners.
+
 ## License
 
 GOVRES is released under the [MIT License](LICENSE). By contributing you agree to the same license.
