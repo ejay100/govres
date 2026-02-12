@@ -79,6 +79,12 @@ npm run dev:web
 docker-compose up -d
 ```
 
+### GitHub Pages Deployment
+
+1. Push to `main` (or trigger the workflow manually) to run `.github/workflows/deploy-web.yml`, which builds `packages/web` and publishes `dist` to GitHub Pages.
+2. The workflow sets `VITE_BASE_PATH="/${REPO_NAME}/"` so static assets resolve correctly on project pages; if you deploy to `username.github.io`, override the workflow (or repository) variable `VITE_BASE_PATH` with `/`.
+3. The site is served from the `github-pages` environment once `actions/deploy-pages@v4` completes; monitor the "Deploy GOVRES Web to GitHub Pages" workflow run for live status.
+
 ## Frontend Portals
 
 | Portal | Route | Role |

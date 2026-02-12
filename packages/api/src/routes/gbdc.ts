@@ -77,7 +77,7 @@ router.post('/redeem', requireRole(UserRole.COMMERCIAL_BANK), async (req: Reques
 });
 
 /** GET /api/v1/gbdc/circulation/summary — GBDC circulation metrics */
-router.get('/circulation/summary', requireRole(UserRole.BOG_ADMIN, UserRole.BOG_AUDITOR), async (_req: Request, res: Response, next: NextFunction) => {
+router.get('/circulation/summary', requireRole(UserRole.BOG_ADMIN, UserRole.BOG_AUDITOR, UserRole.COMMERCIAL_BANK), async (_req: Request, res: Response, next: NextFunction) => {
   try {
     const result = await query(`
       SELECT

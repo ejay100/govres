@@ -2,7 +2,10 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 
+const base = process.env.VITE_BASE_PATH ?? '/'; // Supports GitHub Pages repos under subpaths.
+
 export default defineConfig({
+  base,
   plugins: [react()],
   resolve: {
     alias: {

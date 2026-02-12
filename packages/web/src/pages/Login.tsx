@@ -45,9 +45,7 @@ export function Login() {
     setError('');
     try {
       await login(loginEmail, loginPassword);
-      const stored = localStorage.getItem('govres_user');
-      const user = stored ? JSON.parse(stored) : null;
-      navigate(user ? getRoleDashboard(user.role) : '/');
+      navigate('/portal');
     } catch (err: any) {
       setError(err.response?.data?.error?.message || 'Login failed. Check your credentials.');
     }
@@ -67,9 +65,7 @@ export function Login() {
     }
     try {
       await signup(signupForm);
-      const stored = localStorage.getItem('govres_user');
-      const user = stored ? JSON.parse(stored) : null;
-      navigate(user ? getRoleDashboard(user.role) : '/');
+      navigate('/portal');
     } catch (err: any) {
       setError(err.response?.data?.error?.message || 'Registration failed. Please try again.');
     }

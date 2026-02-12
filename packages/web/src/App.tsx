@@ -7,6 +7,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { LandingPage } from './pages/LandingPage';
 import { PublicDashboard } from './pages/PublicDashboard';
 import { Login } from './pages/Login';
+import { DashboardSelector } from './pages/DashboardSelector';
 import { BogDashboard } from './pages/BogDashboard';
 import { BankDashboard } from './pages/BankDashboard';
 import { FarmerPortal } from './pages/FarmerPortal';
@@ -22,6 +23,9 @@ export default function App() {
       <Route path="/" element={<LandingPage />} />
       <Route path="/dashboard" element={<PublicDashboard />} />
       <Route path="/login" element={<Login />} />
+      
+      {/* Dashboard selector (requires auth) */}
+      <Route path="/portal" element={<DashboardSelector />} />
 
       {/* Role-specific protected portals */}
       <Route path="/bog/*" element={

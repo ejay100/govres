@@ -23,7 +23,7 @@ export function DashboardLayout({ children, title, subtitle, badge }: Props) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-100">
       {/* Header */}
       <header className="bg-govres-black text-white px-8 py-4 flex justify-between items-center shadow-lg">
         <div>

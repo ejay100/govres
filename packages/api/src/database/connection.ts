@@ -8,15 +8,14 @@
 import { Pool, QueryResult } from 'pg';
 import { logger } from '../utils/logger';
 
+// Neon PostgreSQL connection (cloud database)
 const pool = new Pool({
-  host: process.env.DB_HOST || 'localhost',
-  port: parseInt(process.env.DB_PORT || '5432', 10),
-  database: process.env.DB_NAME || 'govres',
-  user: process.env.DB_USER || 'govres_admin',
-  password: process.env.DB_PASSWORD || 'govres_dev_password',
-  max: 20,
+  connectionString: process.env.DATABASE_URL || 
+    'postgresql://neondb_owner:npg_IXZ3ogwN9zlE@ep-snowy-rain-aizvsxck-pooler.c-4.us-east-1.aws.neon.tech/neondb?sslmode=require',
+  ssl: { rejectUnauthorized: false },
+  max: 10,
   idleTimeoutMillis: 30000,
-  connectionTimeoutMillis: 5000,
+  connectionTimeoutMillis: 10000,
 });
 
 pool.on('error', (err) => {
