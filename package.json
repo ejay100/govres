@@ -31,7 +31,7 @@
     "reserve-ledger"
   ],
   "author": "Northlands Systems",
-  "license": "PROPRIETARY",
+  "license": "MIT",
   "devDependencies": {
     "@types/node": "^20.10.0",
     "@vitest/coverage-v8": "^4.0.18",

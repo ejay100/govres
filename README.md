@@ -150,6 +150,14 @@ npm run simulate:stress        # Ledger stress test
 | Oracle attestation validity | 24 hours | System config |
 | Block interval | 5 seconds | Ledger config |
 
+## Contributing
+
+We welcome pull requests! See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, coding standards, and review expectations.
+
+## License
+
+GOVRES is released under the [MIT License](LICENSE). By contributing you agree to the same license.
+
 ---
 
 **GOVRES** — Sovereign commodity-backed digital settlement for Ghana.

@@ -3,6 +3,14 @@
  */
 
 import winston from 'winston';
+import path from 'path';
+import { existsSync, mkdirSync } from 'fs';
+
+const logDir = path.resolve(process.cwd(), 'logs');
+
+if (!existsSync(logDir)) {
+  mkdirSync(logDir, { recursive: true });
+}
 
 export const logger = winston.createLogger({
   level: process.env.LOG_LEVEL || 'info',
@@ -19,8 +27,8 @@ export const logger = winston.createLogger({
         winston.format.simple()
       ),
     }),
-    new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
-    new winston.transports.File({ filename: 'logs/combined.log' }),
-    new winston.transports.File({ filename: 'logs/audit.log', level: 'info' }),
+    new winston.transports.File({ filename: path.join(logDir, 'error.log'), level: 'error' }),
+    new winston.transports.File({ filename: path.join(logDir, 'combined.log') }),
+    new winston.transports.File({ filename: path.join(logDir, 'audit.log'), level: 'info' }),
   ],
 });
