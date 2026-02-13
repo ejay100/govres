@@ -17,6 +17,29 @@ const MIGRATION_SQL = `
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
+-- Drop stale tables so schema is always consistent (dev migration)
+DROP TABLE IF EXISTS ecedi_transactions CASCADE;
+DROP TABLE IF EXISTS yield_notes CASCADE;
+DROP TABLE IF EXISTS project_milestones CASCADE;
+DROP TABLE IF EXISTS government_projects CASCADE;
+DROP TABLE IF EXISTS momo_transactions CASCADE;
+DROP TABLE IF EXISTS bank_settlements CASCADE;
+DROP TABLE IF EXISTS audit_log CASCADE;
+DROP TABLE IF EXISTS oracle_attestations CASCADE;
+DROP TABLE IF EXISTS gold_production_reports CASCADE;
+DROP TABLE IF EXISTS warehouse_entries CASCADE;
+DROP TABLE IF EXISTS cocoa_deliveries CASCADE;
+DROP TABLE IF EXISTS sensor_readings CASCADE;
+DROP TABLE IF EXISTS vault_sensors CASCADE;
+DROP TABLE IF EXISTS gold_bars CASCADE;
+DROP TABLE IF EXISTS crdn_instruments CASCADE;
+DROP TABLE IF EXISTS gbdc_instruments CASCADE;
+DROP TABLE IF EXISTS ledger_transactions CASCADE;
+DROP TABLE IF EXISTS ledger_blocks CASCADE;
+DROP TABLE IF EXISTS account_balances CASCADE;
+DROP TABLE IF EXISTS user_accounts CASCADE;
+DROP TABLE IF EXISTS organizations CASCADE;
+
 -- ============================================================
 -- ACCOUNTS & USERS
 -- ============================================================
@@ -99,12 +122,12 @@ CREATE TABLE IF NOT EXISTS ledger_transactions (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_tx_block ON ledger_transactions(block_height);
-CREATE INDEX idx_tx_instrument ON ledger_transactions(instrument_type, instrument_id);
-CREATE INDEX idx_tx_from ON ledger_transactions(from_account);
-CREATE INDEX idx_tx_to ON ledger_transactions(to_account);
-CREATE INDEX idx_tx_status ON ledger_transactions(status);
-CREATE INDEX idx_tx_created ON ledger_transactions(created_at);
+CREATE INDEX IF NOT EXISTS idx_tx_block ON ledger_transactions(block_height);
+CREATE INDEX IF NOT EXISTS idx_tx_instrument ON ledger_transactions(instrument_type, instrument_id);
+CREATE INDEX IF NOT EXISTS idx_tx_from ON ledger_transactions(from_account);
+CREATE INDEX IF NOT EXISTS idx_tx_to ON ledger_transactions(to_account);
+CREATE INDEX IF NOT EXISTS idx_tx_status ON ledger_transactions(status);
+CREATE INDEX IF NOT EXISTS idx_tx_created ON ledger_transactions(created_at);
 
 -- ============================================================
 -- GBDC — Gold-Backed Digital Cedi
@@ -130,8 +153,8 @@ CREATE TABLE IF NOT EXISTS gbdc_instruments (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_gbdc_holder ON gbdc_instruments(holder_id);
-CREATE INDEX idx_gbdc_status ON gbdc_instruments(status);
+CREATE INDEX IF NOT EXISTS idx_gbdc_holder ON gbdc_instruments(holder_id);
+CREATE INDEX IF NOT EXISTS idx_gbdc_status ON gbdc_instruments(status);
 
 -- ============================================================
 -- CRDN — Cocoa Receipt Digital Note
@@ -158,10 +181,10 @@ CREATE TABLE IF NOT EXISTS crdn_instruments (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_crdn_farmer ON crdn_instruments(farmer_id);
-CREATE INDEX idx_crdn_lbc ON crdn_instruments(lbc_id);
-CREATE INDEX idx_crdn_status ON crdn_instruments(status);
-CREATE INDEX idx_crdn_season ON crdn_instruments(season_year);
+CREATE INDEX IF NOT EXISTS idx_crdn_farmer ON crdn_instruments(farmer_id);
+CREATE INDEX IF NOT EXISTS idx_crdn_lbc ON crdn_instruments(lbc_id);
+CREATE INDEX IF NOT EXISTS idx_crdn_status ON crdn_instruments(status);
+CREATE INDEX IF NOT EXISTS idx_crdn_season ON crdn_instruments(season_year);
 
 -- ============================================================
 -- ORACLE — Gold Reserves
@@ -206,8 +229,8 @@ CREATE TABLE IF NOT EXISTS sensor_readings (
   recorded_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_readings_sensor ON sensor_readings(sensor_id);
-CREATE INDEX idx_readings_time ON sensor_readings(recorded_at);
+CREATE INDEX IF NOT EXISTS idx_readings_sensor ON sensor_readings(sensor_id);
+CREATE INDEX IF NOT EXISTS idx_readings_time ON sensor_readings(recorded_at);
 
 -- ============================================================
 -- ORACLE — Cocoa Warehouse
@@ -236,10 +259,10 @@ CREATE TABLE IF NOT EXISTS cocoa_deliveries (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_delivery_farmer ON cocoa_deliveries(farmer_id);
-CREATE INDEX idx_delivery_lbc ON cocoa_deliveries(lbc_id);
-CREATE INDEX idx_delivery_region ON cocoa_deliveries(region);
-CREATE INDEX idx_delivery_season ON cocoa_deliveries(season_year);
+CREATE INDEX IF NOT EXISTS idx_delivery_farmer ON cocoa_deliveries(farmer_id);
+CREATE INDEX IF NOT EXISTS idx_delivery_lbc ON cocoa_deliveries(lbc_id);
+CREATE INDEX IF NOT EXISTS idx_delivery_region ON cocoa_deliveries(region);
+CREATE INDEX IF NOT EXISTS idx_delivery_season ON cocoa_deliveries(season_year);
 
 CREATE TABLE IF NOT EXISTS warehouse_entries (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -304,8 +327,8 @@ CREATE TABLE IF NOT EXISTS oracle_attestations (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_att_source ON oracle_attestations(source_type, source_id);
-CREATE INDEX idx_att_verified ON oracle_attestations(verified);
+CREATE INDEX IF NOT EXISTS idx_att_source ON oracle_attestations(source_type, source_id);
+CREATE INDEX IF NOT EXISTS idx_att_verified ON oracle_attestations(verified);
 
 -- ============================================================
 -- SETTLEMENTS
@@ -441,10 +464,10 @@ CREATE TABLE IF NOT EXISTS audit_log (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE INDEX idx_audit_action ON audit_log(action);
-CREATE INDEX idx_audit_user ON audit_log(performed_by);
-CREATE INDEX idx_audit_resource ON audit_log(resource_type, resource_id);
-CREATE INDEX idx_audit_time ON audit_log(created_at);
+CREATE INDEX IF NOT EXISTS idx_audit_action ON audit_log(action);
+CREATE INDEX IF NOT EXISTS idx_audit_user ON audit_log(performed_by);
+CREATE INDEX IF NOT EXISTS idx_audit_resource ON audit_log(resource_type, resource_id);
+CREATE INDEX IF NOT EXISTS idx_audit_time ON audit_log(created_at);
 
 -- ============================================================
 -- ACCOUNT BALANCES (Materialized view for performance)
