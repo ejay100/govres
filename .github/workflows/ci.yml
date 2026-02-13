@@ -10,9 +10,9 @@ env:
   NODE_VERSION: '20'
 
 jobs:
-  # ─────────────────────────────────────────
-  # Lint & Type Check
-  # ─────────────────────────────────────────
+   ─────────────────────────────────────────
+   Lint & Type Check
+   ─────────────────────────────────────────
   lint:
     name: Lint & Type Check
     runs-on: ubuntu-latest
@@ -31,9 +31,9 @@ jobs:
       - name: TypeScript compile check
         run: npx tsc --noEmit --project tsconfig.json
 
-  # ─────────────────────────────────────────
-  # Build all packages
-  # ─────────────────────────────────────────
+   ─────────────────────────────────────────
+   Build all packages
+   ─────────────────────────────────────────
   build:
     name: Build
     runs-on: ubuntu-latest
@@ -75,9 +75,9 @@ jobs:
           path: packages/web/dist
           if-no-files-found: ignore
 
-  # ─────────────────────────────────────────
-  # Test
-  # ─────────────────────────────────────────
+   ─────────────────────────────────────────
+   Test
+   ─────────────────────────────────────────
   test:
     name: Test
     runs-on: ubuntu-latest
@@ -120,9 +120,9 @@ jobs:
           JWT_SECRET: test_jwt_secret
           NODE_ENV: test
 
-  # ─────────────────────────────────────────
-  # Security Audit
-  # ─────────────────────────────────────────
+   ─────────────────────────────────────────
+   Security Audit
+   ─────────────────────────────────────────
   security:
     name: Security Audit
     runs-on: ubuntu-latest
@@ -142,9 +142,9 @@ jobs:
         run: npm audit --audit-level=high
         continue-on-error: true
 
-  # ─────────────────────────────────────────
-  # Deploy (main branch only)
-  # ─────────────────────────────────────────
+   ─────────────────────────────────────────
+   Deploy (main branch only)
+   ─────────────────────────────────────────
   deploy:
     name: Deploy
     runs-on: ubuntu-latest

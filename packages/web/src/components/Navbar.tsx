@@ -11,9 +11,9 @@ import { getRoleDashboard } from '../lib/auth';
 const NAV_LINKS = [
   { label: 'Home', to: '/' },
   { label: 'Dashboard', to: '/dashboard' },
-  { label: 'Services', to: '/#services' },
-  { label: 'How It Works', to: '/#how-it-works' },
-  { label: 'About', to: '/#about' },
+  { label: 'Services', to: '/services' },
+  { label: 'How It Works', to: '/how-it-works' },
+  { label: 'About', to: '/about' },
 ];
 
 export function Navbar() {
@@ -28,7 +28,7 @@ export function Navbar() {
       window.location.href = hash;
       return;
     }
-    const id = hash.replace('/#', '');
+    const id = hash.replace('/', '');
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: 'smooth' });
   };
@@ -49,7 +49,7 @@ export function Navbar() {
         {/* Desktop links */}
         <div className="hidden md:flex items-center gap-8">
           {NAV_LINKS.map((link) =>
-            link.to.startsWith('/#') ? (
+            link.to.startsWith('/') ? (
               <button
                 key={link.to}
                 onClick={() => scrollToSection(link.to)}
@@ -120,7 +120,7 @@ export function Navbar() {
       {mobileOpen && (
         <div className="md:hidden bg-govres-navy border-t border-white/10 px-6 py-4 space-y-3">
           {NAV_LINKS.map((link) =>
-            link.to.startsWith('/#') ? (
+            link.to.startsWith('/') ? (
               <button
                 key={link.to}
                 onClick={() => scrollToSection(link.to)}

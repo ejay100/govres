@@ -1,7 +1,7 @@
 version: "3.9"
 
 services:
-  # PostgreSQL Database
+   PostgreSQL Database
   postgres:
     image: postgres:16-alpine
     container_name: govres-db
@@ -19,7 +19,7 @@ services:
       timeout: 5s
       retries: 5
 
-  # API Server
+   API Server
   api:
     build:
       context: .
@@ -43,7 +43,7 @@ services:
       - ./packages:/app/packages
       - ./logs:/app/logs
 
-  # Web Frontend
+   Web Frontend
   web:
     build:
       context: .

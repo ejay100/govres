@@ -1,17 +1,17 @@
-# GOVRES Rapid Response Brief
+ GOVRES Rapid Response Brief
 **To: Hon. Minister for Finance, Republic of Ghana**  
 **Subject: Immediate liquidity relief for cocoa farmers & open-source mobilization**
 
 ---
 
-## Crisis Snapshot (Emergency Cabinet Meeting — Outcome Required)
+ Crisis Snapshot (Emergency Cabinet Meeting — Outcome Required)
 - **Problem:** GH¢ delays to 800k+ cocoa farmers risk supply shocks, smuggling, and FX leakage.
 - **Constraint:** Treasury cannot borrow USD or liquidate gold reserves without worsening debt ratios.
 - **Mandate:** Deliver verifiable, asset-backed payouts within weeks while maintaining public trust.
 
 ---
 
-## GOVRES Offers a Sovereign, Auditable Fix — Today
+ GOVRES Offers a Sovereign, Auditable Fix — Today
 1. **Tokenize existing reserves** (gold, cocoa receipts, royalties) into programmable instruments:
    - `GBDC` (Gold-Backed Digital Credit) for contractor/government flows.
    - `CRDN` (Cocoa Receipt Digital Note) issued at farm-gate delivery.
@@ -22,7 +22,7 @@ Result: Farmers receive instant digital value tied to verified warehouse receipt
 
 ---
 
-## How the Flow Works (Farmer Scenario)
+ How the Flow Works (Farmer Scenario)
 1. LBC uploads IoT-verified cocoa receipt → Oracle layer authenticates weight/quality.
 2. Ledger issues `CRDN` to farmer wallet → SMS + portal confirmation within seconds.
 3. Banks convert `CRDN` to cedi or `GBDC` liquidity; reconciliation happens automatically.
@@ -32,7 +32,7 @@ Projected impact (pilot 10% gold allocation + 2025 receipts): **GH¢10.4B equiva
 
 ---
 
-## Call for National & Global Contributors
+ Call for National & Global Contributors
 We are open-sourcing GOVRES so Ghana — and partners worldwide — can inspect, improve, and co-build:
 - **Repo:** github.com/northlands-systems/govres *(sample URL; customize when public)*
 - **Stack:** TypeScript mono-repo, Express API, React portals, Vite build, Vitest coverage.
@@ -46,7 +46,7 @@ All code licensed under a permissive open-source license (proposed: Apache-2.0) 
 
 ---
 
-## Immediate Actions Requested from MoF
+ Immediate Actions Requested from MoF
 1. **Approve GOVRES emergency deployment** as the cabinet’s preferred payout mechanism.
 2. **Authorize publication of the repository** and invite civic technologists, banks, and universities to contribute.
 3. **Green-light BoG + Cocobod joint task force** to onboard LBCs and farmer cooperatives.

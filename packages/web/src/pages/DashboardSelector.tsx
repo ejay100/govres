@@ -140,7 +140,7 @@ export function DashboardSelector() {
   const primaryPortal = accessiblePortals.find(p => p.role === user.role);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-govres-navy via-[#0a1628] to-govres-blue">
+    <div className="min-h-screen bg-gradient-to-br from-govres-navy via-[0a1628] to-govres-blue">
       {/* Header */}
       <header className="bg-white/5 backdrop-blur-xl border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">

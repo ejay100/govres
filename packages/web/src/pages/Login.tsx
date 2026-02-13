@@ -85,7 +85,7 @@ export function Login() {
     'w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-govres-green focus:border-transparent';
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row bg-gradient-to-br from-govres-navy via-[#0a1628] to-govres-blue">
+    <div className="min-h-screen flex flex-col lg:flex-row bg-gradient-to-br from-govres-navy via-[0a1628] to-govres-blue">
       {/* ── Left: Branding ── */}
       <div className="lg:w-1/2 flex items-center justify-center p-8 lg:p-16">
         <div className="max-w-md text-white">

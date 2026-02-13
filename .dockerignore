@@ -1,26 +1,26 @@
-# Logs
+ Logs
 logs
 *.log
 npm-debug.log*
 
-# Dependencies
+ Dependencies
 node_modules
 
-# Build outputs
+ Build outputs
 dist
 .tsbuildinfo
 
-# Environment
+ Environment
 .env
 .env.local
 .env.production
 
-# IDE
+ IDE
 .vscode
 .idea
 *.swp
 *.swo
 
-# OS
+ OS
 .DS_Store
 Thumbs.db

@@ -1,21 +1,21 @@
-# GOVRES — Government Reserve & Settlement Ledger
+ GOVRES — Government Reserve & Settlement Ledger
 
-**A programmable reserve ledger for gold-backed and cocoa-receipt-backed digital instruments, designed for the Bank of Ghana.**
+A programmable reserve ledger for gold-backed and cocoa-receipt-backed digital instruments, designed for the Bank of Ghana.
 
 ---
 
-## Overview
+ Overview
 
 GOVRES digitizes Ghana's commodity reserves (gold and cocoa) into programmable, asset-backed settlement instruments:
 
-- **GBDC** — Gold-Backed Digital Credit (backed by 10% gold reserve allocation from BoG vaults)
-- **CRDN** — Cocoa Receipt Digitization Note (1:1 backed by Cocobod warehouse receipts)
+- GBDC — Gold-Backed Digital Credit (backed by 10% gold reserve allocation from BoG vaults)
+- CRDN — Cocoa Receipt Digitization Note (1:1 backed by Cocobod warehouse receipts)
 
 The system provides a sovereign, non-blockchain permissioned ledger for government expenditure settlement, farmer payments, contractor disbursements, and diaspora investment — with a bridge to Ghana's eCedi CBDC.
 
-## Architecture
+ Architecture
 
-```
+
 ┌─────────────────────────────────────────────┐
 │  Layer 3 — Financial Access                 │
 │  React Portals: BoG, Banks, Farmers,        │
@@ -29,9 +29,9 @@ The system provides a sovereign, non-blockchain permissioned ledger for governme
 │  Gold vault IoT, Cocobod warehouse sensors, │
 │  GoldBod royalty feeds, crypto attestation   │
 └─────────────────────────────────────────────┘
-```
 
-## Packages
+
+ Packages
 
 | Package | Description |
 |---------|-------------|
@@ -43,49 +43,49 @@ The system provides a sovereign, non-blockchain permissioned ledger for governme
 | `@govres/simulation` | Simulation suite (cocoa flow, contractor payments, stress test) |
 | `@govres/security` | Encryption, audit trails, regulatory compliance engine |
 
-## Quick Start
+ Quick Start
 
-### Prerequisites
+ Prerequisites
 - Node.js 20+
 - PostgreSQL 16+
 - npm 10+
 
-### Setup
+ Setup
 
-```bash
-# Install dependencies
+bash
+ Install dependencies
 npm install
 
-# Copy environment config
+ Copy environment config
 cp .env.example .env
-# Edit .env with your database credentials
+ Edit .env with your database credentials
 
-# Run database migrations
+ Run database migrations
 npm run db:migrate
 
-# Seed initial data (organizations, accounts, genesis block)
+ Seed initial data (organizations, accounts, genesis block)
 npm run db:seed
 
-# Start API server (port 4000)
+ Start API server (port 4000)
 npm run dev:api
 
-# Start web frontend (port 3000)
+ Start web frontend (port 3000)
 npm run dev:web
-```
 
-### Docker
 
-```bash
+ Docker
+
+bash
 docker-compose up -d
-```
 
-### GitHub Pages Deployment
+
+ GitHub Pages Deployment
 
 1. Push to `main` (or trigger the workflow manually) to run `.github/workflows/deploy-web.yml`, which builds `packages/web` and publishes `dist` to GitHub Pages.
 2. The workflow sets `VITE_BASE_PATH="/${REPO_NAME}/"` so static assets resolve correctly on project pages; if you deploy to `username.github.io`, override the workflow (or repository) variable `VITE_BASE_PATH` with `/`.
 3. The site is served from the `github-pages` environment once `actions/deploy-pages@v4` completes; monitor the "Deploy GOVRES Web to GitHub Pages" workflow run for live status.
 
-## Frontend Portals
+ Frontend Portals
 
 | Portal | Route | Role |
 |--------|-------|------|
@@ -98,7 +98,7 @@ docker-compose up -d
 | Agency Portal | `/agency` | GOV_AGENCY |
 | Diaspora Portal | `/diaspora` | DIASPORA_INVESTOR |
 
-## API Endpoints
+ API Endpoints
 
 | Route Group | Base Path | Auth Required |
 |-------------|-----------|---------------|
@@ -112,33 +112,33 @@ docker-compose up -d
 | Projects | `/api/v1/projects` | Yes |
 | CBDC (eCedi) | `/api/v1/cbdc` | Yes |
 
-## Regulatory Compliance
+ Regulatory Compliance
 
 GOVRES is designed to comply with:
 
-- **Bank of Ghana Act, 2002 (Act 612)** — Central bank mandate
-- **Payment Systems & Services Act, 2019 (Act 987)** — Payment rails
-- **Anti-Money Laundering Act, 2020 (Act 1044)** — AML/CTR/STR
-- **Data Protection Act, 2012 (Act 843)** — PII handling
-- **Virtual Asset Service Providers Act, 2025** — Digital asset regulation
-- **Cocoa Industry Regulation (PNDC Law 81, 1984)** — Cocobod operations
-- **Minerals & Mining Act, 2006 (Act 703)** — Gold royalty (5%)
+- Bank of Ghana Act, 2002 (Act 612) — Central bank mandate
+- Payment Systems & Services Act, 2019 (Act 987) — Payment rails
+- Anti-Money Laundering Act, 2020 (Act 1044) — AML/CTR/STR
+- Data Protection Act, 2012 (Act 843) — PII handling
+- Virtual Asset Service Providers Act, 2025 — Digital asset regulation
+- Cocoa Industry Regulation (PNDC Law 81, 1984) — Cocobod operations
+- Minerals & Mining Act, 2006 (Act 703) — Gold royalty (5%)
 
-## Simulation
+ Simulation
 
 Run end-to-end simulations:
 
-```bash
-# Full simulation suite
+bash
+ Full simulation suite
 npm run simulate
 
-# Individual simulations
-npm run simulate:cocoa         # Cocoa season flow
-npm run simulate:contractor    # Government contractor payments
-npm run simulate:stress        # Ledger stress test
-```
+ Individual simulations
+npm run simulate:cocoa          Cocoa season flow
+npm run simulate:contractor     Government contractor payments
+npm run simulate:stress         Ledger stress test
 
-## Key Financial Parameters
+
+ Key Financial Parameters
 
 | Parameter | Value | Source |
 |-----------|-------|--------|
@@ -150,22 +150,22 @@ npm run simulate:stress        # Ledger stress test
 | Oracle attestation validity | 24 hours | System config |
 | Block interval | 5 seconds | Ledger config |
 
-## Contributing
+ Contributing
 
 We welcome pull requests! See [CONTRIBUTING.md](CONTRIBUTING.md) for setup, coding standards, and review expectations.
 
-## Community & Support
+ Community & Support
 
-- **Ideas / roadmap debates:** Use [GitHub Discussions](https://github.com/ejay100/govres/discussions) to propose features, coordinate working groups, or share research.
-- **Bugs / tasks:** Open [GitHub Issues](https://github.com/ejay100/govres/issues) with reproducible details and label appropriately (`bug`, `feature`, `compliance`, etc.).
-- **Announcements:** Reuse or adapt the messaging in [docs/OpenSourceAnnouncement.md](docs/OpenSourceAnnouncement.md) when sharing GOVRES with partners.
+- Ideas / roadmap debates: Use [GitHub Discussions](https://github.com/ejay100/govres/discussions) to propose features, coordinate working groups, or share research.
+- Bugs / tasks: Open [GitHub Issues](https://github.com/ejay100/govres/issues) with reproducible details and label appropriately (`bug`, `feature`, `compliance`, etc.).
+- Announcements: Reuse or adapt the messaging in [docs/OpenSourceAnnouncement.md](docs/OpenSourceAnnouncement.md) when sharing GOVRES with partners.
 
-## License
+ License
 
 GOVRES is released under the [MIT License](LICENSE). By contributing you agree to the same license.
 
 ---
 
-**GOVRES** — Sovereign commodity-backed digital settlement for Ghana.
+GOVRES — Sovereign commodity-backed digital settlement for Ghana.
 
 Built by Northlands Systems.

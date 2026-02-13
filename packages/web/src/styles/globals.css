@@ -4,16 +4,16 @@
 
 :root {
   /* GOVRES Brand Colors — Inspired by Ghana flag and gold */
-  --govres-gold: #D4AF37;
-  --govres-gold-light: #F0D060;
-  --govres-green: #006B3F;
-  --govres-green-light: #00A86B;
-  --govres-red: #CE1126;
-  --govres-black: #1A1A2E;
-  --govres-navy: #16213E;
-  --govres-blue: #0F3460;
-  --govres-white: #FFFFFF;
-  --govres-gray: #F4F4F8;
+  --govres-gold: D4AF37;
+  --govres-gold-light: F0D060;
+  --govres-green: 006B3F;
+  --govres-green-light: 00A86B;
+  --govres-red: CE1126;
+  --govres-black: 1A1A2E;
+  --govres-navy: 16213E;
+  --govres-blue: 0F3460;
+  --govres-white: FFFFFF;
+  --govres-gray: F4F4F8;
 }
 
 body {
@@ -24,8 +24,8 @@ body {
 }
 
 /* Status badges */
-.badge-minted { background: #E8F5E9; color: #2E7D32; }
-.badge-circulating { background: #E3F2FD; color: #1565C0; }
-.badge-redeemed { background: #FFF3E0; color: #E65100; }
-.badge-issued { background: #F3E5F5; color: #7B1FA2; }
-.badge-converted { background: #E0F7FA; color: #00695C; }
+.badge-minted { background: E8F5E9; color: 2E7D32; }
+.badge-circulating { background: E3F2FD; color: 1565C0; }
+.badge-redeemed { background: FFF3E0; color: E65100; }
+.badge-issued { background: F3E5F5; color: 7B1FA2; }
+.badge-converted { background: E0F7FA; color: 00695C; }
