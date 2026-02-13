@@ -54,6 +54,15 @@ export const dashboardAPI = {
   cocoa: () => api.get('/dashboard/cocoa'),
   circulation: () => api.get('/dashboard/circulation'),
   metrics: () => api.get('/dashboard/metrics'),
+  // Historical 5-year data feed
+  historical: () => api.get('/dashboard/historical'),
+  historicalCocoaByYear: (year: number) => api.get(`/dashboard/historical/cocoa/${year}`),
+  historicalGoldByYear: (year: number) => api.get(`/dashboard/historical/gold/${year}`),
+  historicalMacroByYear: (year: number) => api.get(`/dashboard/historical/macro/${year}`),
+  annualCocoa: () => api.get('/dashboard/historical/annual-cocoa'),
+  annualGold: () => api.get('/dashboard/historical/annual-gold'),
+  // Simulation demo
+  simulation: () => api.get('/dashboard/simulation'),
 };
 
 // ─── GBDC ──────────────────────────────────────────────────────

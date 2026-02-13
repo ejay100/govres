@@ -9,11 +9,12 @@ import { useAuth } from '../lib/auth';
 import { getRoleDashboard } from '../lib/auth';
 
 const NAV_LINKS = [
-  { label: 'Home', to: '/' },
-  { label: 'Dashboard', to: '/dashboard' },
-  { label: 'Services', to: '/services' },
-  { label: 'How It Works', to: '/how-it-works' },
-  { label: 'About', to: '/about' },
+  { label: 'Home', to: '/', isRoute: true },
+  { label: 'Dashboard', to: '/dashboard', isRoute: true },
+  { label: 'Simulation', to: '/simulation', isRoute: true },
+  { label: 'Services', to: '/services', isRoute: false },
+  { label: 'How It Works', to: '/how-it-works', isRoute: false },
+  { label: 'About', to: '/about', isRoute: false },
 ];
 
 export function Navbar() {
@@ -49,15 +50,7 @@ export function Navbar() {
         {/* Desktop links */}
         <div className="hidden md:flex items-center gap-8">
           {NAV_LINKS.map((link) =>
-            link.to.startsWith('/') ? (
-              <button
-                key={link.to}
-                onClick={() => scrollToSection(link.to)}
-                className="text-sm text-gray-300 hover:text-govres-gold transition-colors"
-              >
-                {link.label}
-              </button>
-            ) : (
+            link.isRoute ? (
               <Link
                 key={link.to}
                 to={link.to}
@@ -69,6 +62,14 @@ export function Navbar() {
               >
                 {link.label}
               </Link>
+            ) : (
+              <button
+                key={link.to}
+                onClick={() => scrollToSection(link.to)}
+                className="text-sm text-gray-300 hover:text-govres-gold transition-colors"
+              >
+                {link.label}
+              </button>
             )
           )}
         </div>
@@ -120,15 +121,7 @@ export function Navbar() {
       {mobileOpen && (
         <div className="md:hidden bg-govres-navy border-t border-white/10 px-6 py-4 space-y-3">
           {NAV_LINKS.map((link) =>
-            link.to.startsWith('/') ? (
-              <button
-                key={link.to}
-                onClick={() => scrollToSection(link.to)}
-                className="block w-full text-left text-sm text-gray-300 hover:text-govres-gold py-1"
-              >
-                {link.label}
-              </button>
-            ) : (
+            link.isRoute ? (
               <Link
                 key={link.to}
                 to={link.to}
@@ -137,6 +130,14 @@ export function Navbar() {
               >
                 {link.label}
               </Link>
+            ) : (
+              <button
+                key={link.to}
+                onClick={() => scrollToSection(link.to)}
+                className="block w-full text-left text-sm text-gray-300 hover:text-govres-gold py-1"
+              >
+                {link.label}
+              </button>
             )
           )}
           <div className="pt-3 border-t border-white/10">

@@ -13,17 +13,18 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
-    include: ['packages//src//*.test.ts', 'packages//src//*.spec.ts'],
+    include: ['packages/**/src/**/*.test.ts', 'packages/**/src/**/*.spec.ts'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'text-summary', 'lcov'],
       include: [
-        'packages/ledger/src//*.ts',
-        'packages/oracle/src//*.ts',
-        'packages/security/src//*.ts',
-        'packages/shared/src//*.ts',
+        'packages/ledger/src/**/*.ts',
+        'packages/oracle/src/**/*.ts',
+        'packages/security/src/**/*.ts',
+        'packages/shared/src/**/*.ts',
+        'packages/simulation/src/**/*.ts',
       ],
-      exclude: ['/index.ts', '/*.test.ts', '/*.spec.ts', '/dist/'],
+      exclude: ['**/index.ts', '**/*.test.ts', '**/*.spec.ts', '**/dist/**'],
     },
   },
 });

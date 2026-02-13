@@ -1,10 +1,21 @@
 /**
  * GOVRES — Public Dashboard Routes
  * Real database queries for sovereign asset transparency.
+ * Includes historical 5-year data feed and simulation endpoints.
  */
 
 import { Router, Request, Response, NextFunction } from 'express';
 import { query } from '../database/connection';
+import {
+  getHistoricalFeed,
+  getCocoaByYear,
+  getGoldByYear,
+  getMacroByYear,
+  getCocoaAnnualSummary,
+  getGoldAnnualSummary,
+  FINANCIAL,
+  UserRole,
+} from '@govres/shared';
 
 const router = Router();
 
@@ -103,3 +114,183 @@ router.get('/metrics', async (_req: Request, res: Response, next: NextFunction) 
 });
 
 export { router as dashboardRoutes };
+
+// ─── Historical Data Feed ───────────────────────────────────────
+
+/* GET /api/v1/dashboard/historical — Full 5-year data feed */
+router.get('/historical', (_req: Request, res: Response) => {
+  const feed = getHistoricalFeed();
+  res.json({ success: true, data: feed });
+});
+
+/* GET /api/v1/dashboard/historical/cocoa/:year */
+router.get('/historical/cocoa/:year', (req: Request, res: Response) => {
+  const year = parseInt(req.params.year, 10);
+  if (isNaN(year) || year < 2020 || year > 2025) {
+    return res.status(400).json({ success: false, error: { code: 'INVALID_YEAR', message: 'Year must be 2020-2025' } });
+  }
+  res.json({ success: true, data: getCocoaByYear(year) });
+});
+
+/* GET /api/v1/dashboard/historical/gold/:year */
+router.get('/historical/gold/:year', (req: Request, res: Response) => {
+  const year = parseInt(req.params.year, 10);
+  if (isNaN(year) || year < 2020 || year > 2025) {
+    return res.status(400).json({ success: false, error: { code: 'INVALID_YEAR', message: 'Year must be 2020-2025' } });
+  }
+  res.json({ success: true, data: getGoldByYear(year) });
+});
+
+/* GET /api/v1/dashboard/historical/macro/:year */
+router.get('/historical/macro/:year', (req: Request, res: Response) => {
+  const year = parseInt(req.params.year, 10);
+  if (isNaN(year) || year < 2020 || year > 2025) {
+    return res.status(400).json({ success: false, error: { code: 'INVALID_YEAR', message: 'Year must be 2020-2025' } });
+  }
+  res.json({ success: true, data: getMacroByYear(year) });
+});
+
+/* GET /api/v1/dashboard/historical/annual-cocoa */
+router.get('/historical/annual-cocoa', (_req: Request, res: Response) => {
+  res.json({ success: true, data: getCocoaAnnualSummary() });
+});
+
+/* GET /api/v1/dashboard/historical/annual-gold */
+router.get('/historical/annual-gold', (_req: Request, res: Response) => {
+  res.json({ success: true, data: getGoldAnnualSummary() });
+});
+
+// ─── Simulation Demo Endpoint ───────────────────────────────────
+
+/* GET /api/v1/dashboard/simulation — Run in-memory simulation demo */
+router.get('/simulation', async (_req: Request, res: Response) => {
+  try {
+    // Import LedgerEngine dynamically for simulation
+    const { LedgerEngine } = await import('@govres/ledger');
+
+    const engine = new LedgerEngine('simulation-demo-validator');
+    engine.initialize();
+
+    // Register reserves
+    engine.registerGoldReserve(5_000_000, 'sim-gold-attest');    // 5M grams (~161k oz)
+    engine.registerCocoaReserve(500_000, 'sim-cocoa-attest');     // 500k kg
+
+    // Register participants
+    engine.registerAccount('TREASURY', UserRole.GOVT_AGENCY);
+    engine.registerAccount('SIM_BOG_ADMIN', UserRole.BOG_ADMIN);
+    ['GCB', 'ECOBANK', 'STANBIC', 'ABSA'].forEach(b =>
+      engine.registerAccount(b, UserRole.COMMERCIAL_BANK)
+    );
+
+    // ── Phase 1: Money Printing (GBDC Minting) ──
+    const mintResults: Array<{ id: string; amount: number; label: string }> = [];
+    const mintingSchedule = [
+      { label: 'Infrastructure Budget', amount: 500_000_000, backing: 50_000 },
+      { label: 'Education Fund', amount: 200_000_000, backing: 20_000 },
+      { label: 'Health Sector', amount: 150_000_000, backing: 15_000 },
+      { label: 'Agriculture Support', amount: 100_000_000, backing: 10_000 },
+      { label: 'Digital Economy', amount: 50_000_000, backing: 5_000 },
+    ];
+
+    for (const mint of mintingSchedule) {
+      const id = engine.mintGBDC({
+        amountCedi: mint.amount,
+        goldBackingGrams: mint.backing,
+        goldPricePerGramUSD: 105,
+        exchangeRateUSDGHS: 14.5,
+        issuanceId: `SIM-${mint.label.replace(/\s/g, '-')}`,
+        issuedBy: 'BOG_TREASURY',
+      });
+      mintResults.push({ id, amount: mint.amount, label: mint.label });
+    }
+
+    // ── Phase 2: Contractor Payments ──
+    const projects = [
+      { name: 'Accra-Tema Motorway Extension', amount: 120_000_000, contractor: 'JULIUS_BERGER' },
+      { name: 'Tamale Teaching Hospital', amount: 45_000_000, contractor: 'CHINA_STATE' },
+      { name: 'Bui Solar Plant Phase II', amount: 28_000_000, contractor: 'AMERI_ENERGY' },
+      { name: 'Kumasi Water Supply Upgrade', amount: 18_500_000, contractor: 'AQUA_VITENS' },
+    ];
+
+    const projectResults: Array<{ name: string; amount: number; txId: string }> = [];
+    for (const p of projects) {
+      engine.registerAccount(p.contractor, UserRole.CONTRACTOR);
+      const txId = engine.transferGBDC({
+        instrumentId: mintResults[0].id,
+        fromAccount: 'BOG_TREASURY',
+        toAccount: p.contractor,
+        amountCedi: p.amount,
+        description: `Disbursement: ${p.name}`,
+      });
+      projectResults.push({ name: p.name, amount: p.amount, txId });
+    }
+
+    // ── Phase 3: Cocoa Season (CRDN) ──
+    const farmers = Array.from({ length: 20 }, (_, i) => {
+      const farmerId = `FARMER_SIM_${i}`;
+      engine.registerAccount(farmerId, UserRole.FARMER);
+      return {
+        id: farmerId,
+        name: `Farmer ${i + 1}`,
+        bags: 10 + Math.floor(Math.random() * 40),
+      };
+    });
+    engine.registerAccount('PBC_LTD', UserRole.LBC);
+
+    let totalCrdnValue = 0;
+    for (const f of farmers) {
+      const weightKg = f.bags * 64;
+      const crdnId = engine.issueCRDN({
+        farmerId: f.id,
+        lbcId: 'PBC_LTD',
+        cocoaWeightKg: weightKg,
+        pricePerKgGHS: 99.89,
+        warehouseReceiptId: `SIM-WR-${f.id}`,
+        seasonYear: '2025/2026',
+        attestationHash: 'sim-cocoa-attest',
+      });
+      totalCrdnValue += weightKg * 99.89;
+    }
+
+    // ── Summary KPIs ──
+    const summary = engine.getReserveSummary();
+    const totalMinted = mintingSchedule.reduce((s, m) => s + m.amount, 0);
+    const totalDisbursed = projects.reduce((s, p) => s + p.amount, 0);
+    const effectiveLiquidity = totalMinted * FINANCIAL.MONEY_MULTIPLIER;
+
+    res.json({
+      success: true,
+      data: {
+        kpis: {
+          totalGBDCMinted: totalMinted,
+          totalGBDCMintedFormatted: `GH₵ ${(totalMinted / 1e9).toFixed(2)}B`,
+          effectiveLiquidity,
+          effectiveLiquidityFormatted: `GH₵ ${(effectiveLiquidity / 1e9).toFixed(2)}B`,
+          moneyMultiplier: FINANCIAL.MONEY_MULTIPLIER,
+          totalContractorDisbursed: totalDisbursed,
+          totalCRDNValue: Math.round(totalCrdnValue),
+          totalFarmersServed: farmers.length,
+          goldReserveGrams: summary.goldReserveGrams,
+          cocoaReserveKg: summary.cocoaReserveKg,
+          reserveBackingRatio: summary.reserveBackingRatio,
+          chainHeight: summary.chainHeight,
+          totalAccounts: summary.accountCount,
+          totalGBDCOutstanding: summary.totalGBDCOutstanding,
+          totalCRDNOutstanding: summary.totalCRDNOutstanding,
+        },
+        minting: mintResults,
+        projects: projectResults,
+        farmerStats: {
+          totalFarmers: farmers.length,
+          totalBags: farmers.reduce((s, f) => s + f.bags, 0),
+          totalCrdnValue: Math.round(totalCrdnValue),
+          avgCrdnPerFarmer: Math.round(totalCrdnValue / farmers.length),
+        },
+        reserveSummary: summary,
+        timestamp: new Date(),
+      },
+    });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: { code: 'SIMULATION_ERROR', message: error.message } });
+  }
+});

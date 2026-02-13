@@ -15,6 +15,7 @@ import { ContractorPortal } from './pages/ContractorPortal';
 import { AgencyPortal } from './pages/AgencyPortal';
 import { DiasporaPortal } from './pages/DiasporaPortal';
 import { CocoaSupplyChain } from './pages/CocoaSupplyChain';
+import { SimulationDashboard } from './pages/SimulationDashboard';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
 export default function App() {
@@ -23,6 +24,7 @@ export default function App() {
       {/* Public routes */}
       <Route path="/" element={<LandingPage />} />
       <Route path="/dashboard" element={<PublicDashboard />} />
+      <Route path="/simulation" element={<SimulationDashboard />} />
       <Route path="/login" element={<Login />} />
       
       {/* Dashboard selector (requires auth) */}
