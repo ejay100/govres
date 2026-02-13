@@ -8,88 +8,88 @@
 // ─── Regulatory References ──────────────────────────────────────
 
 export const REGULATORY = {
-  /** Bank of Ghana Act, 2002 (Act 612) */
+  /* Bank of Ghana Act, 2002 (Act 612) */
   BOG_ACT: 'Act 612',
-  /** Payment Systems and Services Act, 2019 (Act 987) */
+  /* Payment Systems and Services Act, 2019 (Act 987) */
   PAYMENT_SYSTEMS_ACT: 'Act 987',
-  /** Ghana Cocoa Board Act, 1984 (PNDC Law 81) */
+  /* Ghana Cocoa Board Act, 1984 (PNDC Law 81) */
   COCOBOD_ACT: 'PNDC Law 81',
-  /** Virtual Asset Service Providers Act, 2025 */
+  /* Virtual Asset Service Providers Act, 2025 */
   VASP_ACT: 'VASP Act 2025',
-  /** Anti-Money Laundering Act, 2020 (Act 1044) */
+  /* Anti-Money Laundering Act, 2020 (Act 1044) */
   AML_ACT: 'Act 1044',
-  /** Data Protection Act, 2012 (Act 843) */
+  /* Data Protection Act, 2012 (Act 843) */
   DATA_PROTECTION_ACT: 'Act 843',
 } as const;
 
 // ─── Financial Parameters (from Whitepaper) ─────────────────────
 
 export const FINANCIAL = {
-  /** Gold reserves allocation for GBDC issuance (10% of gold reserves) */
+  /* Gold reserves allocation for GBDC issuance (10% of gold reserves) */
   GOLD_RESERVE_ALLOCATION_PERCENT: 10,
 
-  /** Estimated gold reserve value for GBDC backing (~GH¢4.15B at 10%) */
+  /* Estimated gold reserve value for GBDC backing (~GH¢4.15B at 10%) */
   INITIAL_GBDC_CAPACITY_GHS: 4_150_000_000,
 
-  /** Banking money multiplier for GBDC */
+  /* Banking money multiplier for GBDC */
   MONEY_MULTIPLIER: 2.5,
 
-  /** Effective liquidity from GBDC at 2.5x multiplier (~GH¢10.4B) */
+  /* Effective liquidity from GBDC at 2.5x multiplier (~GH¢10.4B) */
   EFFECTIVE_LIQUIDITY_GHS: 10_400_000_000,
 
-  /** 2025 cocoa receipts value estimate */
+  /* 2025 cocoa receipts value estimate */
   COCOA_RECEIPTS_2025_GHS: 44_950_000_000,
 
-  /** Standard cocoa bag weight in kg */
+  /* Standard cocoa bag weight in kg */
   STANDARD_COCOA_BAG_KG: 64,
 
-  /** Troy ounce to grams conversion */
+  /* Troy ounce to grams conversion */
   TROY_OUNCE_GRAMS: 31.1035,
 
-  /** Minimum GBDC issuance amount */
+  /* Minimum GBDC issuance amount */
   MIN_GBDC_ISSUANCE_CEDI: 1000,
 
-  /** Minimum CRDN value */
+  /* Minimum CRDN value */
   MIN_CRDN_VALUE_CEDI: 10,
 
-  /** Maximum daily MoMo transaction limit */
+  /* Maximum daily MoMo transaction limit */
   MAX_MOMO_DAILY_CEDI: 50_000,
 
-  /** Settlement finality window in seconds */
+  /* Settlement finality window in seconds */
   SETTLEMENT_FINALITY_SECONDS: 30,
 } as const;
 
 // ─── System Configuration ───────────────────────────────────────
 
 export const SYSTEM = {
-  /** Ledger block generation interval in milliseconds */
+  /* Ledger block generation interval in milliseconds */
   BLOCK_INTERVAL_MS: 5000,
 
-  /** Maximum transactions per block */
+  /* Maximum transactions per block */
   MAX_TX_PER_BLOCK: 1000,
 
-  /** Oracle attestation validity window in hours */
+  /* Oracle attestation validity window in hours */
   ORACLE_ATTESTATION_VALIDITY_HOURS: 24,
 
-  /** Sensor reading interval in seconds */
+  /* Sensor reading interval in seconds */
   SENSOR_READING_INTERVAL_SECONDS: 60,
 
-  /** Audit log retention period in days */
+  /* Audit log retention period in days */
   AUDIT_RETENTION_DAYS: 2555, // ~7 years per regulatory requirement
 
-  /** Session timeout in minutes */
+  /* Session timeout in minutes */
   SESSION_TIMEOUT_MINUTES: 30,
 
-  /** Maximum API requests per minute per user */
+  /* Maximum API requests per minute per user */
   API_RATE_LIMIT: 100,
 
-  /** Cryptographic hash algorithm */
+  /* Cryptographic hash algorithm */
   HASH_ALGORITHM: 'SHA-256',
 
-  /** Digital signature algorithm */
+  /* Digital signature algorithm */
   SIGNATURE_ALGORITHM: 'RSA-PSS',
 
-  /** Key size for RSA operations */
+  /* Key size for RSA operations */
   RSA_KEY_SIZE: 4096,
 } as const;
 

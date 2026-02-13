@@ -1,25 +1,27 @@
-/** @type {import('tailwindcss').Config} */
+/ @type {import('tailwindcss').Config} */
 export default {
-  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  content: ['./index.html', './src//*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
       colors: {
         govres: {
           gold: 'D4AF37',
-          'gold-light': 'F5E6B8',
+          'gold-light': '#3A3020',
           'gold-dark': 'A68B28',
           green: '006B3F',
-          'green-light': 'E6F4ED',
+          'green-light': '#1a3a2a',
           'green-dark': '004D2C',
           navy: '1A1A2E',
           'navy-light': '2D2D44',
           black: '0D0D14',
           red: 'CE1126',
-          'red-light': 'FDE8EB',
+          'red-light': '#3a1a1e',
           blue: '0F3460',
-          'blue-light': 'E8EEF5',
+          'blue-light': '#1a2a3a',
           cocoa: '8B4513',
-          'cocoa-light': 'F5EDE6',
+          'cocoa-light': '#2e1f10',
+          surface: '#1A1A2E',
+          'surface-light': '#222236',
         },
       },
       fontFamily: {

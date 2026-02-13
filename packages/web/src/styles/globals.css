@@ -9,9 +9,11 @@
   --govres-green: 006B3F;
   --govres-green-light: 00A86B;
   --govres-red: CE1126;
-  --govres-black: 1A1A2E;
+  --govres-black: 0D0D14;
   --govres-navy: 16213E;
   --govres-blue: 0F3460;
+  --govres-surface: 1A1A2E;
+  --govres-surface-light: 222236;
   --govres-white: FFFFFF;
   --govres-gray: F4F4F8;
 }
@@ -19,13 +21,13 @@
 body {
   margin: 0;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background-color: var(--govres-gray);
-  color: var(--govres-black);
+  background-color: var(--govres-black);
+  color: #E5E7EB;
 }
 
-/* Status badges */
-.badge-minted { background: E8F5E9; color: 2E7D32; }
-.badge-circulating { background: E3F2FD; color: 1565C0; }
-.badge-redeemed { background: FFF3E0; color: E65100; }
-.badge-issued { background: F3E5F5; color: 7B1FA2; }
-.badge-converted { background: E0F7FA; color: 00695C; }
+/* Status badges (dark theme) */
+.badge-minted { background: #1a3a2a; color: #6ee7b7; }
+.badge-circulating { background: #1a2a3a; color: #7dd3fc; }
+.badge-redeemed { background: #3a2a1a; color: #fdba74; }
+.badge-issued { background: #2a1a3a; color: #d8b4fe; }
+.badge-converted { background: #1a3a3a; color: #5eead4; }

@@ -8,7 +8,7 @@ import { query } from '../database/connection';
 
 const router = Router();
 
-/** GET /api/v1/dashboard/reserves — Public reserve summary */
+/* GET /api/v1/dashboard/reserves — Public reserve summary */
 router.get('/reserves', async (_req: Request, res: Response, next: NextFunction) => {
   try {
     const gold = await query(`SELECT COALESCE(SUM(weight_grams), 0) as total_grams, COUNT(*) as total_bars FROM gold_bars WHERE status = 'ACTIVE'`);
@@ -52,7 +52,7 @@ router.get('/reserves', async (_req: Request, res: Response, next: NextFunction)
   } catch (error) { next(error); }
 });
 
-/** GET /api/v1/dashboard/gold */
+/* GET /api/v1/dashboard/gold */
 router.get('/gold', async (_req: Request, res: Response, next: NextFunction) => {
   try {
     const bars = await query(`SELECT bar_id, weight_grams, purity, vault_id, status, last_verified_at FROM gold_bars ORDER BY created_at DESC LIMIT 50`);
@@ -61,7 +61,7 @@ router.get('/gold', async (_req: Request, res: Response, next: NextFunction) => 
   } catch (error) { next(error); }
 });
 
-/** GET /api/v1/dashboard/cocoa */
+/* GET /api/v1/dashboard/cocoa */
 router.get('/cocoa', async (_req: Request, res: Response, next: NextFunction) => {
   try {
     const result = await query(`
@@ -72,7 +72,7 @@ router.get('/cocoa', async (_req: Request, res: Response, next: NextFunction) =>
   } catch (error) { next(error); }
 });
 
-/** GET /api/v1/dashboard/circulation */
+/* GET /api/v1/dashboard/circulation */
 router.get('/circulation', async (_req: Request, res: Response, next: NextFunction) => {
   try {
     const gbdc = await query(`SELECT COALESCE(SUM(amount_cedi) FILTER (WHERE status IN ('MINTED','CIRCULATING')), 0) as circulating, COALESCE(SUM(amount_cedi) FILTER (WHERE status = 'REDEEMED'), 0) as redeemed, COUNT(*) as minted FROM gbdc_instruments`);
@@ -81,7 +81,7 @@ router.get('/circulation', async (_req: Request, res: Response, next: NextFuncti
   } catch (error) { next(error); }
 });
 
-/** GET /api/v1/dashboard/metrics */
+/* GET /api/v1/dashboard/metrics */
 router.get('/metrics', async (_req: Request, res: Response, next: NextFunction) => {
   try {
     const blocks = await query('SELECT COALESCE(MAX(block_height), 0) as height FROM ledger_blocks');

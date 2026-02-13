@@ -1,6 +1,6 @@
 Here’s a detailed, phased development roadmap for GOVRES, fully aligned with the whitepaper, 
 
----
+
 
  GOVRES Development Roadmap
 
@@ -19,7 +19,7 @@ Tasks:
 4. Identify hardware requirements for oracles (vault sensors, warehouse IoT devices)
 5. Select ledger and technology stack for backend, APIs, and frontend
 
----
+
 
  Phase 1 — Core Ledger & Oracle Layer (4–6 weeks)
 
@@ -40,7 +40,7 @@ Tasks:
 4. Ensure tamper-proof logging and auditability
 5. Build initial admin dashboard for BoG and regulators
 
----
+
 
  Phase 2 — Financial Rails & Backend Integration (6–8 weeks)
 
@@ -58,7 +58,7 @@ Tasks:
 5. Build CRDN issuance workflow for farmers → LBC → conversion to GBDC
 6. Security layer: encryption, digital signatures, fraud detection
 
----
+
 
  Phase 3 — Frontend & User Interfaces (4–6 weeks)
 
@@ -76,7 +76,7 @@ Tasks:
 6. Public read-only asset dashboard: gold reserves, cocoa receipts, circulation metrics
 7. Notification & alert system for payments, issuance, redemption
 
----
+
 
  Phase 4 — CBDC Integration Layer (3–4 weeks)
 
@@ -92,7 +92,7 @@ Tasks:
 4. Implement smart routing: direct transactions through CBDC when operational
 5. Test end-to-end integration with pilot eCedi instances
 
----
+
 
  Phase 5 — Simulation & Analytics Module (2–3 weeks)
 
@@ -107,7 +107,7 @@ Tasks:
 3. Money multiplier modeling for GBDC and CRDN
 4. Generate dashboard metrics for asset circulation, liquidity velocity, and reserve-backed projections
 
----
+
 
  Phase 6 — Security, Compliance & Audit (2–3 weeks)
 
@@ -123,7 +123,7 @@ Tasks:
 4. Penetration testing and system hardening
 5. Disaster recovery and redundancy planning
 
----
+
 
  Phase 7 — Pilot Deployment & Feedback (4–6 weeks)
 
@@ -139,7 +139,7 @@ Tasks:
 4. Collect performance, usability, and security feedback
 5. Optimize backend, API, and frontend flows
 
----
+
 
  Phase 8 — National & Pan-African Scaling (8–12 weeks)
 
@@ -156,7 +156,7 @@ Tasks:
 5. Extend public dashboards to pan-African visibility
 6. Integrate fully with retail CBDC once eCedi is operational
 
----
+
 
  Phase 9 — Maintenance, Governance & Continuous Upgrades (Ongoing)
 
@@ -172,7 +172,7 @@ Tasks:
 4. Add additional CBDC and cross-border interoperability features
 5. Analytics and dashboard enhancements
 
----
+
 
  Deliverables Across Phases
 
@@ -186,9 +186,9 @@ Tasks:
 * Pilot deployment and national rollout strategy
 * Pan-African scaling framework
 
----
+
 
 This roadmap ensures full execution of GOVRES, from Ghana pilot → national deployment → cross-border expansion → retail CBDC backbone, while remaining asset-backed, compliant, secure, and scalable.
 
----
+
 

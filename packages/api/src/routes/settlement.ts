@@ -11,7 +11,7 @@ import { AppError } from '../middleware/error-handler';
 
 const router = Router();
 
-/** POST /api/v1/settlement/interbank */
+/* POST /api/v1/settlement/interbank */
 router.post('/interbank', requireRole(UserRole.BOG_ADMIN, UserRole.COMMERCIAL_BANK), async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { fromBankId, toBankId, amountCedi, instrumentId, referenceNumber } = req.body;
@@ -34,7 +34,7 @@ router.post('/interbank', requireRole(UserRole.BOG_ADMIN, UserRole.COMMERCIAL_BA
   } catch (error) { next(error); }
 });
 
-/** POST /api/v1/settlement/contractor-payment */
+/* POST /api/v1/settlement/contractor-payment */
 router.post('/contractor-payment', requireRole(UserRole.BOG_ADMIN, UserRole.GOVT_AGENCY, UserRole.COMMERCIAL_BANK), async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { projectId, contractorId, amountCedi, milestoneId, bankId, description } = req.body;
@@ -56,7 +56,7 @@ router.post('/contractor-payment', requireRole(UserRole.BOG_ADMIN, UserRole.GOVT
   } catch (error) { next(error); }
 });
 
-/** POST /api/v1/settlement/farmer-cashout */
+/* POST /api/v1/settlement/farmer-cashout */
 router.post('/farmer-cashout', requireRole(UserRole.FARMER, UserRole.LBC, UserRole.COMMERCIAL_BANK), async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { crdnInstrumentId, farmerId, channel, momoProvider, momoPhone } = req.body;
@@ -78,7 +78,7 @@ router.post('/farmer-cashout', requireRole(UserRole.FARMER, UserRole.LBC, UserRo
   } catch (error) { next(error); }
 });
 
-/** GET /api/v1/settlement/bank/:bankId/summary */
+/* GET /api/v1/settlement/bank/:bankId/summary */
 router.get('/bank/:bankId/summary', requireRole(UserRole.COMMERCIAL_BANK, UserRole.BOG_ADMIN), async (req: Request, res: Response, next: NextFunction) => {
   try {
     const result = await query(
@@ -91,7 +91,7 @@ router.get('/bank/:bankId/summary', requireRole(UserRole.COMMERCIAL_BANK, UserRo
   } catch (error) { next(error); }
 });
 
-/** GET /api/v1/settlement/:settlementId */
+/* GET /api/v1/settlement/:settlementId */
 router.get('/:settlementId', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const result = await query('SELECT * FROM bank_settlements WHERE settlement_id = $1', [req.params.settlementId]);

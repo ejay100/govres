@@ -10,9 +10,9 @@ import { dashboardAPI, gbdcAPI, oracleAPI, ledgerAPI } from '../lib/api';
 
 function StatCard({ label, value, sub, accent, bgAccent }: { label: string; value: string; sub?: string; accent: string; bgAccent?: string }) {
   return (
-    <div className={`rounded-xl p-5 shadow-card border-l-4 ${accent} ${bgAccent || 'bg-white'} transition-shadow hover:shadow-card-hover`}>
-      <p className="text-xs text-gray-600 uppercase tracking-wider font-semibold">{label}</p>
-      <p className="text-2xl font-bold mt-2 text-gray-900">{value}</p>
+    <div className={`rounded-xl p-5 shadow-card border-l-4 ${accent} ${bgAccent || 'bg-govres-surface'} transition-shadow hover:shadow-card-hover`}>
+      <p className="text-xs text-gray-400 uppercase tracking-wider font-semibold">{label}</p>
+      <p className="text-2xl font-bold mt-2 text-white">{value}</p>
       {sub && <p className="text-sm text-gray-500 mt-1 font-medium">{sub}</p>}
     </div>
   );
@@ -73,63 +73,63 @@ export function BogDashboard() {
         {/* ── Gold Detail & Oracle ── */}
         <div className="lg:col-span-2 space-y-6">
           {/* Gold Summary */}
-          <div className="bg-white rounded-xl p-6 shadow-card border border-gray-100">
-            <h2 className="font-bold text-lg mb-4 text-gray-800 flex items-center gap-2">
+          <div className="bg-govres-surface rounded-xl p-6 shadow-card border border-white/10">
+            <h2 className="font-bold text-lg mb-4 text-white flex items-center gap-2">
               <span className="w-2 h-2 bg-govres-gold rounded-full"></span>
               Gold Vault Summary
             </h2>
             <div className="grid grid-cols-3 gap-6">
-              <div className="bg-gray-50 rounded-lg p-4">
-                <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">Total Bars</p>
-                <p className="font-bold text-xl text-gray-900 mt-1">{fmt(gold?.totalBars)}</p>
+              <div className="bg-govres-surface-light rounded-lg p-4">
+                <p className="text-xs text-gray-400 uppercase tracking-wide font-medium">Total Bars</p>
+                <p className="font-bold text-xl text-white mt-1">{fmt(gold?.totalBars)}</p>
               </div>
-              <div className="bg-gray-50 rounded-lg p-4">
-                <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">Total Weight (oz)</p>
-                <p className="font-bold text-xl text-gray-900 mt-1">{fmt(gold?.totalOunces)}</p>
+              <div className="bg-govres-surface-light rounded-lg p-4">
+                <p className="text-xs text-gray-400 uppercase tracking-wide font-medium">Total Weight (oz)</p>
+                <p className="font-bold text-xl text-white mt-1">{fmt(gold?.totalOunces)}</p>
               </div>
-              <div className="bg-gray-50 rounded-lg p-4">
-                <p className="text-xs text-gray-500 uppercase tracking-wide font-medium">Valuation</p>
-                <p className="font-bold text-xl text-govres-green mt-1">{fmtCedi(gold?.valueCedi)}</p>
+              <div className="bg-govres-surface-light rounded-lg p-4">
+                <p className="text-xs text-gray-400 uppercase tracking-wide font-medium">Valuation</p>
+                <p className="font-bold text-xl text-emerald-400 mt-1">{fmtCedi(gold?.valueCedi)}</p>
               </div>
             </div>
           </div>
 
           {/* Ledger Status */}
-          <div className="bg-white rounded-xl p-6 shadow-card border border-gray-100">
-            <h2 className="font-bold text-lg mb-4 text-gray-800 flex items-center gap-2">
+          <div className="bg-govres-surface rounded-xl p-6 shadow-card border border-white/10">
+            <h2 className="font-bold text-lg mb-4 text-white flex items-center gap-2">
               <span className="w-2 h-2 bg-govres-blue rounded-full"></span>
               Ledger Status
             </h2>
             <div className="grid grid-cols-4 gap-4">
               <div className="text-center p-3 bg-govres-blue-light rounded-lg">
-                <p className="text-xs text-gray-600 uppercase tracking-wide font-medium">Block Height</p>
-                <p className="font-bold text-xl text-govres-blue mt-1">{fmt(ls?.blockHeight)}</p>
+                <p className="text-xs text-gray-400 uppercase tracking-wide font-medium">Block Height</p>
+                <p className="font-bold text-xl text-sky-400 mt-1">{fmt(ls?.blockHeight)}</p>
               </div>
-              <div className="text-center p-3 bg-gray-50 rounded-lg">
-                <p className="text-xs text-gray-600 uppercase tracking-wide font-medium">Transactions</p>
-                <p className="font-bold text-xl text-gray-900 mt-1">{fmt(ls?.totalTransactions)}</p>
+              <div className="text-center p-3 bg-govres-surface-light rounded-lg">
+                <p className="text-xs text-gray-400 uppercase tracking-wide font-medium">Transactions</p>
+                <p className="font-bold text-xl text-white mt-1">{fmt(ls?.totalTransactions)}</p>
               </div>
-              <div className="text-center p-3 bg-gray-50 rounded-lg">
-                <p className="text-xs text-gray-600 uppercase tracking-wide font-medium">Accounts</p>
-                <p className="font-bold text-xl text-gray-900 mt-1">{fmt(ls?.activeAccounts)}</p>
+              <div className="text-center p-3 bg-govres-surface-light rounded-lg">
+                <p className="text-xs text-gray-400 uppercase tracking-wide font-medium">Accounts</p>
+                <p className="font-bold text-xl text-white mt-1">{fmt(ls?.activeAccounts)}</p>
               </div>
-              <div className="text-center p-3 bg-green-50 rounded-lg">
-                <p className="text-xs text-gray-600 uppercase tracking-wide font-medium">Status</p>
+              <div className="text-center p-3 bg-emerald-900/30 rounded-lg">
+                <p className="text-xs text-gray-400 uppercase tracking-wide font-medium">Status</p>
                 <span className="inline-block mt-2 text-xs font-bold px-3 py-1 rounded-full bg-green-600 text-white shadow-sm">Active</span>
               </div>
             </div>
           </div>
 
           {/* Recent Transactions */}
-          <div className="bg-white rounded-xl p-6 shadow-card border border-gray-100">
-            <h2 className="font-bold text-lg mb-4 text-gray-800 flex items-center gap-2">
+          <div className="bg-govres-surface rounded-xl p-6 shadow-card border border-white/10">
+            <h2 className="font-bold text-lg mb-4 text-white flex items-center gap-2">
               <span className="w-2 h-2 bg-govres-green rounded-full"></span>
               Recent Transactions
             </h2>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="bg-gray-50 text-gray-700">
+                  <tr className="bg-govres-surface-light text-gray-300">
                     <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider rounded-l-lg">TX ID</th>
                     <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider">Type</th>
                     <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider">Amount</th>
@@ -137,19 +137,19 @@ export function BogDashboard() {
                     <th className="py-3 px-4 text-left text-xs font-bold uppercase tracking-wider rounded-r-lg">Time</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100">
+                <tbody className="divide-y divide-white/5">
                   {txList.length === 0 ? (
-                    <tr><td colSpan={5} className="py-8 text-center text-gray-400">No transactions yet</td></tr>
+                    <tr><td colSpan={5} className="py-8 text-center text-gray-500">No transactions yet</td></tr>
                   ) : (
                     txList.slice(0, 10).map((tx: any) => (
-                      <tr key={tx.transaction_id} className="hover:bg-gray-50 transition-colors">
-                        <td className="py-3 px-4 font-mono text-xs text-gray-700">{tx.transaction_id?.slice(0, 12)}…</td>
-                        <td className="py-3 px-4 font-medium text-gray-800">{tx.transaction_type}</td>
-                        <td className="py-3 px-4 font-semibold text-gray-900">{fmtCedi(tx.amount_cedi)}</td>
+                      <tr key={tx.transaction_id} className="hover:bg-white/5 transition-colors">
+                        <td className="py-3 px-4 font-mono text-xs text-gray-400">{tx.transaction_id?.slice(0, 12)}…</td>
+                        <td className="py-3 px-4 font-medium text-gray-300">{tx.transaction_type}</td>
+                        <td className="py-3 px-4 font-semibold text-white">{fmtCedi(tx.amount_cedi)}</td>
                         <td className="py-3 px-4">
                           <span className={`text-xs px-2.5 py-1 rounded-full font-bold ${
-                            tx.status === 'CONFIRMED' ? 'bg-green-100 text-green-700 ring-1 ring-green-200' :
-                            tx.status === 'PENDING' ? 'bg-amber-100 text-amber-700 ring-1 ring-amber-200' : 'bg-gray-100 text-gray-600 ring-1 ring-gray-200'
+                            tx.status === 'CONFIRMED' ? 'bg-emerald-900/40 text-emerald-400 ring-1 ring-emerald-700' :
+                            tx.status === 'PENDING' ? 'bg-amber-900/40 text-amber-400 ring-1 ring-amber-700' : 'bg-gray-800 text-gray-400 ring-1 ring-gray-600'
                           }`}>{tx.status}</span>
                         </td>
                         <td className="py-3 px-4 text-xs text-gray-500">{new Date(tx.created_at).toLocaleString()}</td>
@@ -164,57 +164,57 @@ export function BogDashboard() {
 
         {/* ── Right Sidebar — Mint GBDC ── */}
         <div className="space-y-6">
-          <div className="bg-white rounded-xl p-6 shadow-card border border-gray-100">
-            <h2 className="font-bold text-lg mb-5 text-gray-800 flex items-center gap-2">
+          <div className="bg-govres-surface rounded-xl p-6 shadow-card border border-white/10">
+            <h2 className="font-bold text-lg mb-5 text-white flex items-center gap-2">
               <span className="w-8 h-8 bg-govres-green-light rounded-lg flex items-center justify-center">
-                <span className="text-govres-green font-bold text-sm">₵</span>
+                <span className="text-emerald-400 font-bold text-sm">₵</span>
               </span>
               Mint GBDC
             </h2>
             <form onSubmit={handleMint} className="space-y-5">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Amount (GH₵)</label>
+                <label className="block text-sm font-semibold text-gray-300 mb-2">Amount (GH₵)</label>
                 <input
                   type="number"
                   step="0.01"
                   value={mintForm.amountCedi}
                   onChange={e => setMintForm(p => ({ ...p, amountCedi: e.target.value }))}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-sm font-medium focus:ring-2 focus:ring-govres-green focus:border-govres-green transition-colors"
+                  className="w-full px-4 py-3 border-2 border-white/10 bg-govres-surface-light rounded-lg text-sm font-medium text-white focus:ring-2 focus:ring-govres-green focus:border-govres-green transition-colors placeholder-gray-500"
                   placeholder="0.00"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Gold Backing (grams)</label>
+                <label className="block text-sm font-semibold text-gray-300 mb-2">Gold Backing (grams)</label>
                 <input
                   type="number"
                   step="0.001"
                   value={mintForm.goldBackingGrams}
                   onChange={e => setMintForm(p => ({ ...p, goldBackingGrams: e.target.value }))}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-sm font-medium focus:ring-2 focus:ring-govres-green focus:border-govres-green transition-colors"
+                  className="w-full px-4 py-3 border-2 border-white/10 bg-govres-surface-light rounded-lg text-sm font-medium text-white focus:ring-2 focus:ring-govres-green focus:border-govres-green transition-colors placeholder-gray-500"
                   placeholder="0.000"
                   required
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Description</label>
+                <label className="block text-sm font-semibold text-gray-300 mb-2">Description</label>
                 <input
                   type="text"
                   value={mintForm.description}
                   onChange={e => setMintForm(p => ({ ...p, description: e.target.value }))}
-                  className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-govres-green focus:border-govres-green transition-colors"
+                  className="w-full px-4 py-3 border-2 border-white/10 bg-govres-surface-light rounded-lg text-sm text-white focus:ring-2 focus:ring-govres-green focus:border-govres-green transition-colors placeholder-gray-500"
                   placeholder="Issuance note"
                 />
               </div>
 
               {mintMutation.isError && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                  <p className="text-sm text-red-700 font-medium">{(mintMutation.error as any)?.response?.data?.error?.message || 'Mint failed'}</p>
+                <div className="p-3 bg-red-900/30 border border-red-800 rounded-lg">
+                  <p className="text-sm text-red-400 font-medium">{(mintMutation.error as any)?.response?.data?.error?.message || 'Mint failed'}</p>
                 </div>
               )}
               {mintMutation.isSuccess && (
-                <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
-                  <p className="text-sm text-green-700 font-medium">GBDC minted successfully ✓</p>
+                <div className="p-3 bg-emerald-900/30 border border-emerald-800 rounded-lg">
+                  <p className="text-sm text-emerald-400 font-medium">GBDC minted successfully ✓</p>
                 </div>
               )}
 

@@ -9,10 +9,10 @@ import { dashboardAPI } from '../lib/api';
 
 function StatCard({ label, value, sub, color }: { label: string; value: string; sub?: string; color: string }) {
   return (
-    <div className={`bg-white rounded-xl p-6 shadow-sm border-l-4 ${color}`}>
-      <p className="text-sm text-gray-500 font-medium">{label}</p>
-      <p className="text-2xl font-bold mt-1">{value}</p>
-      {sub && <p className="text-xs text-gray-400 mt-1">{sub}</p>}
+    <div className={`bg-[#1A1A2E] rounded-xl p-6 shadow-sm border-l-4 ${color}`}>
+      <p className="text-sm text-gray-400 font-medium">{label}</p>
+      <p className="text-2xl font-bold mt-1 text-white">{value}</p>
+      {sub && <p className="text-xs text-gray-500 mt-1">{sub}</p>}
     </div>
   );
 }
@@ -39,7 +39,7 @@ export function PublicDashboard() {
     n != null ? `GH₵ ${new Intl.NumberFormat('en-GH', { minimumFractionDigits: 2 }).format(n)}` : '—';
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#0D0D14]">
       <Navbar />
 
       {/* Hero */}
@@ -57,12 +57,12 @@ export function PublicDashboard() {
 
       <main className="max-w-7xl mx-auto px-6 py-8 space-y-8">
         {loadingReserves ? (
-          <div className="text-center py-20 text-gray-400">Loading reserve data…</div>
+          <div className="text-center py-20 text-gray-500">Loading reserve data…</div>
         ) : (
           <>
             {/* Reserve Cards */}
             <section>
-              <h2 className="text-lg font-semibold mb-4">Reserve Backing</h2>
+              <h2 className="text-lg font-semibold mb-4 text-white">Reserve Backing</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <StatCard
                   label="Gold Reserve (oz)"
@@ -93,7 +93,7 @@ export function PublicDashboard() {
 
             {/* Monetary Metrics */}
             <section>
-              <h2 className="text-lg font-semibold mb-4">System Metrics</h2>
+              <h2 className="text-lg font-semibold mb-4 text-white">System Metrics</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <StatCard label="Block Height" value={fmt(m?.blockHeight)} color="border-blue-500" />
                 <StatCard label="Total Transactions" value={fmt(m?.totalTransactions)} color="border-indigo-500" />
@@ -105,9 +105,9 @@ export function PublicDashboard() {
         )}
 
         {/* Info Bar */}
-        <section className="bg-white rounded-xl p-6 shadow-sm">
-          <h2 className="text-lg font-semibold mb-2">About GOVRES</h2>
-          <p className="text-sm text-gray-600 leading-relaxed">
+        <section className="bg-[#1A1A2E] rounded-xl p-6 shadow-sm border border-white/10">
+          <h2 className="text-lg font-semibold mb-2 text-white">About GOVRES</h2>
+          <p className="text-sm text-gray-400 leading-relaxed">
             The Government Reserve & Settlement Ledger (GOVRES) is Ghana's permissioned settlement
             infrastructure, managed by the Bank of Ghana. It enables Gold-Backed Digital Certificates (GBDC),
             Cocoa Receipt Digital Notes (CRDN), and eCedi interoperability — all backed by independently verified
@@ -116,7 +116,7 @@ export function PublicDashboard() {
         </section>
       </main>
 
-      <footer className="bg-govres-black text-gray-400 text-center py-6 text-xs">
+      <footer className="bg-[#0a0a12] text-gray-500 text-center py-6 text-xs">
         <p>© {new Date().getFullYear()} Bank of Ghana — No. 1 Thorpe Road, Accra</p>
       </footer>
     </div>

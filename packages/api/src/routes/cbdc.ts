@@ -10,7 +10,7 @@ import { query } from '../database/connection';
 
 const router = Router();
 
-/** GET /api/v1/cbdc/status */
+/* GET /api/v1/cbdc/status */
 router.get('/status', async (_req: Request, res: Response) => {
   res.json({
     success: true,
@@ -24,7 +24,7 @@ router.get('/status', async (_req: Request, res: Response) => {
   });
 });
 
-/** POST /api/v1/cbdc/convert/gbdc-to-ecedi */
+/* POST /api/v1/cbdc/convert/gbdc-to-ecedi */
 router.post('/convert/gbdc-to-ecedi', requireRole(UserRole.COMMERCIAL_BANK, UserRole.BOG_ADMIN), async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { gbdcInstrumentId, amountCedi } = req.body;
@@ -48,7 +48,7 @@ router.post('/convert/gbdc-to-ecedi', requireRole(UserRole.COMMERCIAL_BANK, User
   } catch (error) { next(error); }
 });
 
-/** POST /api/v1/cbdc/convert/crdn-to-ecedi */
+/* POST /api/v1/cbdc/convert/crdn-to-ecedi */
 router.post('/convert/crdn-to-ecedi', requireRole(UserRole.FARMER, UserRole.COMMERCIAL_BANK), async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { crdnInstrumentId, farmerId } = req.body;
@@ -68,7 +68,7 @@ router.post('/convert/crdn-to-ecedi', requireRole(UserRole.FARMER, UserRole.COMM
   } catch (error) { next(error); }
 });
 
-/** POST /api/v1/cbdc/transaction-proof */
+/* POST /api/v1/cbdc/transaction-proof */
 router.post('/transaction-proof', requireRole(UserRole.BOG_ADMIN, UserRole.COMMERCIAL_BANK), async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { txId, instrumentType, instrumentId } = req.body;
@@ -86,7 +86,7 @@ router.post('/transaction-proof', requireRole(UserRole.BOG_ADMIN, UserRole.COMME
   } catch (error) { next(error); }
 });
 
-/** POST /api/v1/cbdc/smart-route */
+/* POST /api/v1/cbdc/smart-route */
 router.post('/smart-route', requireRole(UserRole.COMMERCIAL_BANK, UserRole.BOG_ADMIN), async (req: Request, res: Response) => {
   const { fromAccount, toAccount, amountCedi, instrumentType } = req.body;
   const ecediAvailable = false;

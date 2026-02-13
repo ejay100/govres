@@ -10,7 +10,7 @@ import { query } from '../database/connection';
 
 const router = Router();
 
-/** GET /api/v1/oracle/gold/vault/:vaultId */
+/* GET /api/v1/oracle/gold/vault/:vaultId */
 router.get('/gold/vault/:vaultId', requireRole(UserRole.BOG_ADMIN, UserRole.BOG_AUDITOR), async (req: Request, res: Response, next: NextFunction) => {
   try {
     const bars = await query('SELECT * FROM gold_bars WHERE vault_id = $1', [req.params.vaultId]);
@@ -24,7 +24,7 @@ router.get('/gold/vault/:vaultId', requireRole(UserRole.BOG_ADMIN, UserRole.BOG_
   } catch (error) { next(error); }
 });
 
-/** POST /api/v1/oracle/gold/attestation */
+/* POST /api/v1/oracle/gold/attestation */
 router.post('/gold/attestation', requireRole(UserRole.BOG_ADMIN), async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { vaultId, data: attestData } = req.body;
@@ -41,7 +41,7 @@ router.post('/gold/attestation', requireRole(UserRole.BOG_ADMIN), async (req: Re
   } catch (error) { next(error); }
 });
 
-/** GET /api/v1/oracle/cocoa/warehouse/:warehouseId */
+/* GET /api/v1/oracle/cocoa/warehouse/:warehouseId */
 router.get('/cocoa/warehouse/:warehouseId', requireRole(UserRole.BOG_ADMIN, UserRole.BOG_AUDITOR, UserRole.GOVT_AGENCY), async (req: Request, res: Response, next: NextFunction) => {
   try {
     const entries = await query('SELECT * FROM warehouse_entries WHERE warehouse_id = $1 ORDER BY stored_at DESC', [req.params.warehouseId]);
@@ -50,7 +50,7 @@ router.get('/cocoa/warehouse/:warehouseId', requireRole(UserRole.BOG_ADMIN, User
   } catch (error) { next(error); }
 });
 
-/** POST /api/v1/oracle/cocoa/delivery */
+/* POST /api/v1/oracle/cocoa/delivery */
 router.post('/cocoa/delivery', requireRole(UserRole.LBC), async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { farmerId, farmerName, region, district, community, bagsCount, weightKg, qualityGrade, moistureContent, seasonYear, gpsLat, gpsLng } = req.body;
@@ -67,7 +67,7 @@ router.post('/cocoa/delivery', requireRole(UserRole.LBC), async (req: Request, r
   } catch (error) { next(error); }
 });
 
-/** GET /api/v1/oracle/goldbod/royalties */
+/* GET /api/v1/oracle/goldbod/royalties */
 router.get('/goldbod/royalties', requireRole(UserRole.BOG_ADMIN, UserRole.BOG_AUDITOR, UserRole.GOVT_AGENCY), async (_req: Request, res: Response, next: NextFunction) => {
   try {
     const result = await query('SELECT * FROM gold_production_reports ORDER BY period_year DESC, period_quarter DESC LIMIT 20');
@@ -76,7 +76,7 @@ router.get('/goldbod/royalties', requireRole(UserRole.BOG_ADMIN, UserRole.BOG_AU
   } catch (error) { next(error); }
 });
 
-/** POST /api/v1/oracle/goldbod/production-report */
+/* POST /api/v1/oracle/goldbod/production-report */
 router.post('/goldbod/production-report', requireRole(UserRole.BOG_ADMIN), async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { periodYear, periodQuarter, producerId, producerName, mineId, mineName, region, productionOunces, goldPricePerOunceUSD, exchangeRateUSDGHS } = req.body;

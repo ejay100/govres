@@ -10,7 +10,7 @@
 
 import crypto from 'crypto';
 
-/** Encryption algorithm per BoG Cyber Directive requirements */
+/* Encryption algorithm per BoG Cyber Directive requirements */
 const ALGORITHM = 'aes-256-gcm';
 const IV_LENGTH = 16;
 const TAG_LENGTH = 16;

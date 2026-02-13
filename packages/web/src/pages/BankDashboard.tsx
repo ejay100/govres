@@ -82,32 +82,32 @@ export function BankDashboard() {
     <DashboardLayout title="Bank Dashboard">
       {/* Balance Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-        <div className="bg-white rounded-xl p-5 shadow-sm border-t-4 border-govres-green">
-          <p className="text-xs text-gray-500 uppercase">GBDC Issued</p>
-          <p className="text-2xl font-bold mt-1">{fmtCedi(circ?.activeValue)}</p>
-          <p className="text-xs text-gray-400 mt-1">{circ?.activeCount ?? 0} instruments</p>
+        <div className="bg-govres-surface rounded-xl p-5 shadow-sm border-t-4 border-govres-green">
+          <p className="text-xs text-gray-400 uppercase">GBDC Issued</p>
+          <p className="text-2xl font-bold mt-1 text-white">{fmtCedi(circ?.activeValue)}</p>
+          <p className="text-xs text-gray-500 mt-1">{circ?.activeCount ?? 0} instruments</p>
         </div>
-        <div className="bg-white rounded-xl p-5 shadow-sm border-t-4 border-govres-gold">
-          <p className="text-xs text-gray-500 uppercase">Settlements Today</p>
-          <p className="text-2xl font-bold mt-1">{summary?.totalSettlements ?? '—'}</p>
+        <div className="bg-govres-surface rounded-xl p-5 shadow-sm border-t-4 border-govres-gold">
+          <p className="text-xs text-gray-400 uppercase">Settlements Today</p>
+          <p className="text-2xl font-bold mt-1 text-white">{summary?.totalSettlements ?? '—'}</p>
         </div>
-        <div className="bg-white rounded-xl p-5 shadow-sm border-t-4 border-blue-500">
-          <p className="text-xs text-gray-500 uppercase">Net Position</p>
-          <p className="text-2xl font-bold mt-1">{fmtCedi(summary?.netPosition)}</p>
+        <div className="bg-govres-surface rounded-xl p-5 shadow-sm border-t-4 border-blue-500">
+          <p className="text-xs text-gray-400 uppercase">Net Position</p>
+          <p className="text-2xl font-bold mt-1 text-white">{fmtCedi(summary?.netPosition)}</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* ── Interbank Settlement ── */}
-        <div className="bg-white rounded-xl p-6 shadow-sm">
-          <h2 className="text-lg font-semibold mb-4">Interbank Settlement</h2>
+        <div className="bg-govres-surface rounded-xl p-6 shadow-sm border border-white/10">
+          <h2 className="text-lg font-semibold mb-4 text-white">Interbank Settlement</h2>
           <form onSubmit={handleSettle} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Counterparty Bank</label>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Counterparty Bank</label>
               <select
                 value={settleForm.counterpartyBankId}
                 onChange={e => setSettleForm(p => ({ ...p, counterpartyBankId: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-govres-green"
+                className="w-full px-3 py-2 border border-white/10 bg-govres-surface-light rounded-lg text-sm text-white focus:ring-2 focus:ring-govres-green"
                 required
               >
                 <option value="">Select bank…</option>
@@ -121,22 +121,22 @@ export function BankDashboard() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Amount (GH₵)</label>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Amount (GH₵)</label>
               <input
                 type="number"
                 step="0.01"
                 value={settleForm.amountCedi}
                 onChange={e => setSettleForm(p => ({ ...p, amountCedi: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                className="w-full px-3 py-2 border border-white/10 bg-govres-surface-light rounded-lg text-sm text-white"
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Instrument</label>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Instrument</label>
               <select
                 value={settleForm.instrumentType}
                 onChange={e => setSettleForm(p => ({ ...p, instrumentType: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                className="w-full px-3 py-2 border border-white/10 bg-govres-surface-light rounded-lg text-sm text-white"
               >
                 <option value="GBDC">GBDC</option>
                 <option value="CRDN">CRDN</option>
@@ -156,39 +156,39 @@ export function BankDashboard() {
         </div>
 
         {/* ── Contractor Payment ── */}
-        <div className="bg-white rounded-xl p-6 shadow-sm">
-          <h2 className="text-lg font-semibold mb-4">Contractor Payment</h2>
+        <div className="bg-govres-surface rounded-xl p-6 shadow-sm border border-white/10">
+          <h2 className="text-lg font-semibold mb-4 text-white">Contractor Payment</h2>
           <form onSubmit={handlePay} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Project ID</label>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Project ID</label>
               <input
                 type="text"
                 value={payForm.projectId}
                 onChange={e => setPayForm(p => ({ ...p, projectId: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                className="w-full px-3 py-2 border border-white/10 bg-govres-surface-light rounded-lg text-sm text-white"
                 placeholder="PROJECT-XXXX"
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Milestone ID</label>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Milestone ID</label>
               <input
                 type="text"
                 value={payForm.milestoneId}
                 onChange={e => setPayForm(p => ({ ...p, milestoneId: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                className="w-full px-3 py-2 border border-white/10 bg-govres-surface-light rounded-lg text-sm text-white"
                 placeholder="MS-0001"
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Amount (GH₵)</label>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Amount (GH₵)</label>
               <input
                 type="number"
                 step="0.01"
                 value={payForm.amountCedi}
                 onChange={e => setPayForm(p => ({ ...p, amountCedi: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                className="w-full px-3 py-2 border border-white/10 bg-govres-surface-light rounded-lg text-sm text-white"
                 required
               />
             </div>
@@ -207,11 +207,11 @@ export function BankDashboard() {
       </div>
 
       {/* Settlement History */}
-      <div className="mt-6 bg-white rounded-xl p-6 shadow-sm">
-        <h2 className="text-lg font-semibold mb-3">Settlement History</h2>
+      <div className="mt-6 bg-govres-surface rounded-xl p-6 shadow-sm border border-white/10">
+        <h2 className="text-lg font-semibold mb-3 text-white">Settlement History</h2>
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
-            <thead className="text-xs text-gray-500 uppercase border-b">
+            <thead className="text-xs text-gray-400 uppercase border-b border-white/10">
               <tr>
                 <th className="py-2 pr-4">Date</th>
                 <th className="py-2 pr-4">Counterparty</th>
@@ -225,13 +225,13 @@ export function BankDashboard() {
                 <tr><td colSpan={5} className="py-4 text-center text-gray-400">No settlements recorded</td></tr>
               ) : (
                 (summary?.recentSettlements ?? []).map((s: any, i: number) => (
-                  <tr key={i} className="border-b last:border-0">
-                    <td className="py-2 pr-4 text-xs">{new Date(s.created_at).toLocaleDateString()}</td>
-                    <td className="py-2 pr-4">{s.counterparty_bank || '—'}</td>
-                    <td className="py-2 pr-4">{fmtCedi(s.amount_cedi)}</td>
-                    <td className="py-2 pr-4">{s.settlement_type}</td>
+                  <tr key={i} className="border-b border-white/5 last:border-0">
+                    <td className="py-2 pr-4 text-xs text-gray-400">{new Date(s.created_at).toLocaleDateString()}</td>
+                    <td className="py-2 pr-4 text-gray-300">{s.counterparty_bank || '—'}</td>
+                    <td className="py-2 pr-4 text-white">{fmtCedi(s.amount_cedi)}</td>
+                    <td className="py-2 pr-4 text-gray-300">{s.settlement_type}</td>
                     <td className="py-2">
-                      <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-800 font-medium">{s.status}</span>
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-900/40 text-emerald-400 font-medium">{s.status}</span>
                     </td>
                   </tr>
                 ))

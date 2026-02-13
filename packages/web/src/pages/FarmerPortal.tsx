@@ -66,35 +66,35 @@ export function FarmerPortal() {
     <DashboardLayout title="Farmer Portal">
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
-        <div className="bg-white rounded-xl p-5 shadow-sm border-t-4 border-govres-green">
-          <p className="text-xs text-gray-500 uppercase">My Active CRDNs</p>
-          <p className="text-2xl font-bold mt-1">{totals?.activeCount ?? 0}</p>
+        <div className="bg-[#1A1A2E] rounded-xl p-5 shadow-sm border-t-4 border-govres-green">
+          <p className="text-xs text-gray-400 uppercase">My Active CRDNs</p>
+          <p className="text-2xl font-bold text-white mt-1">{totals?.activeCount ?? 0}</p>
           <p className="text-xs text-gray-400 mt-1">{fmtCedi(totals?.activeValue)}</p>
         </div>
-        <div className="bg-white rounded-xl p-5 shadow-sm border-t-4 border-govres-gold">
-          <p className="text-xs text-gray-500 uppercase">Converted</p>
-          <p className="text-2xl font-bold mt-1">{totals?.convertedCount ?? 0}</p>
+        <div className="bg-[#1A1A2E] rounded-xl p-5 shadow-sm border-t-4 border-govres-gold">
+          <p className="text-xs text-gray-400 uppercase">Converted</p>
+          <p className="text-2xl font-bold text-white mt-1">{totals?.convertedCount ?? 0}</p>
           <p className="text-xs text-gray-400 mt-1">{fmtCedi(totals?.convertedValue)}</p>
         </div>
-        <div className="bg-white rounded-xl p-5 shadow-sm border-t-4 border-blue-500">
-          <p className="text-xs text-gray-500 uppercase">Season Total</p>
-          <p className="text-2xl font-bold mt-1">{season?.totalInstruments ?? '—'}</p>
+        <div className="bg-[#1A1A2E] rounded-xl p-5 shadow-sm border-t-4 border-blue-500">
+          <p className="text-xs text-gray-400 uppercase">Season Total</p>
+          <p className="text-2xl font-bold text-white mt-1">{season?.totalInstruments ?? '—'}</p>
           <p className="text-xs text-gray-400 mt-1">{fmtCedi(season?.totalValue)}</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* CRDN Instrument List */}
-        <div className="lg:col-span-2 bg-white rounded-xl p-6 shadow-sm">
-          <h2 className="text-lg font-semibold mb-4">My CRDN Instruments</h2>
+        <div className="lg:col-span-2 bg-[#1A1A2E] rounded-xl p-6 shadow-sm border border-white/10">
+          <h2 className="text-lg font-semibold text-white mb-4">My CRDN Instruments</h2>
           {isLoading ? (
             <p className="text-gray-400 py-4">Loading…</p>
           ) : instruments.length === 0 ? (
             <p className="text-gray-400 py-4">No CRDN instruments found for your account.</p>
           ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left">
-                <thead className="text-xs text-gray-500 uppercase border-b">
+              <table className="w-full text-sm text-left text-gray-300">
+                <thead className="text-xs text-gray-400 uppercase border-b border-white/10">
                   <tr>
                     <th className="py-2 pr-3">ID</th>
                     <th className="py-2 pr-3">Value</th>
@@ -106,16 +106,16 @@ export function FarmerPortal() {
                 </thead>
                 <tbody>
                   {instruments.map((inst: any) => (
-                    <tr key={inst.instrument_id} className="border-b last:border-0">
+                    <tr key={inst.instrument_id} className="border-b border-white/10 last:border-0">
                       <td className="py-2 pr-3 font-mono text-xs">{inst.instrument_id?.slice(0, 12)}…</td>
                       <td className="py-2 pr-3">{fmtCedi(inst.amount_cedi)}</td>
                       <td className="py-2 pr-3">{inst.cocoa_weight_mt ?? '—'}</td>
                       <td className="py-2 pr-3">{inst.cocoa_grade ?? '—'}</td>
                       <td className="py-2 pr-3">
                         <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                          inst.status === 'ACTIVE' ? 'bg-green-100 text-green-800' :
-                          inst.status === 'CONVERTED' ? 'bg-blue-100 text-blue-800' :
-                          'bg-gray-100 text-gray-600'
+                          inst.status === 'ACTIVE' ? 'bg-emerald-900/40 text-emerald-400' :
+                          inst.status === 'CONVERTED' ? 'bg-blue-900/40 text-blue-400' :
+                          'bg-gray-800 text-gray-400'
                         }`}>{inst.status}</span>
                       </td>
                       <td className="py-2">
@@ -144,26 +144,26 @@ export function FarmerPortal() {
         </div>
 
         {/* MoMo Cashout */}
-        <div className="bg-white rounded-xl p-6 shadow-sm">
-          <h2 className="text-lg font-semibold mb-4">MoMo Cashout</h2>
+        <div className="bg-[#1A1A2E] rounded-xl p-6 shadow-sm border border-white/10">
+          <h2 className="text-lg font-semibold text-white mb-4">MoMo Cashout</h2>
           <form onSubmit={handleCashout} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Amount (GH₵)</label>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Amount (GH₵)</label>
               <input
                 type="number"
                 step="0.01"
                 value={cashoutForm.amountCedi}
                 onChange={e => setCashoutForm(p => ({ ...p, amountCedi: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                className="w-full px-3 py-2 border border-white/10 bg-[#222236] text-white rounded-lg text-sm"
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Provider</label>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Provider</label>
               <select
                 value={cashoutForm.momoProvider}
                 onChange={e => setCashoutForm(p => ({ ...p, momoProvider: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                className="w-full px-3 py-2 border border-white/10 bg-[#222236] text-white rounded-lg text-sm"
               >
                 <option value="MTN">MTN Mobile Money</option>
                 <option value="VODAFONE">Vodafone Cash</option>
@@ -171,12 +171,12 @@ export function FarmerPortal() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Phone Number</label>
               <input
                 type="tel"
                 value={cashoutForm.momoNumber}
                 onChange={e => setCashoutForm(p => ({ ...p, momoNumber: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                className="w-full px-3 py-2 border border-white/10 bg-[#222236] text-white rounded-lg text-sm"
                 placeholder="024 XXX XXXX"
                 required
               />

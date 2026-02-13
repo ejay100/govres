@@ -11,7 +11,7 @@ import { AppError } from '../middleware/error-handler';
 
 const router = Router();
 
-/** POST /api/v1/crdn/issue — Issue CRDN at farm-gate delivery */
+/* POST /api/v1/crdn/issue — Issue CRDN at farm-gate delivery */
 router.post('/issue', requireRole(UserRole.LBC, UserRole.BOG_ADMIN), async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { farmerId, lbcId, cocoaWeightKg, pricePerKgGHS, warehouseReceiptId, seasonYear, qualityGrade } = req.body;
@@ -41,7 +41,7 @@ router.post('/issue', requireRole(UserRole.LBC, UserRole.BOG_ADMIN), async (req:
   } catch (error) { next(error); }
 });
 
-/** POST /api/v1/crdn/convert — Convert CRDN to GBDC or cash */
+/* POST /api/v1/crdn/convert — Convert CRDN to GBDC or cash */
 router.post('/convert', requireRole(UserRole.FARMER, UserRole.LBC, UserRole.COMMERCIAL_BANK), async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { instrumentId, targetInstrument, settlementChannel, momoPhone } = req.body;
@@ -64,7 +64,7 @@ router.post('/convert', requireRole(UserRole.FARMER, UserRole.LBC, UserRole.COMM
   } catch (error) { next(error); }
 });
 
-/** GET /api/v1/crdn/farmer/:farmerId — Get all CRDNs for a farmer */
+/* GET /api/v1/crdn/farmer/:farmerId — Get all CRDNs for a farmer */
 router.get('/farmer/:farmerId', requireRole(UserRole.FARMER, UserRole.LBC, UserRole.BOG_ADMIN, UserRole.BOG_AUDITOR), async (req: Request, res: Response, next: NextFunction) => {
   try {
     const instruments = await query('SELECT * FROM crdn_instruments WHERE farmer_id = $1 ORDER BY created_at DESC', [req.params.farmerId]);
@@ -78,7 +78,7 @@ router.get('/farmer/:farmerId', requireRole(UserRole.FARMER, UserRole.LBC, UserR
   } catch (error) { next(error); }
 });
 
-/** GET /api/v1/crdn/season/:seasonYear — Season summary */
+/* GET /api/v1/crdn/season/:seasonYear — Season summary */
 router.get('/season/:seasonYear', requireRole(UserRole.BOG_ADMIN, UserRole.BOG_AUDITOR, UserRole.GOVT_AGENCY), async (req: Request, res: Response, next: NextFunction) => {
   try {
     const result = await query(
@@ -94,7 +94,7 @@ router.get('/season/:seasonYear', requireRole(UserRole.BOG_ADMIN, UserRole.BOG_A
   } catch (error) { next(error); }
 });
 
-/** GET /api/v1/crdn/:instrumentId */
+/* GET /api/v1/crdn/:instrumentId */
 router.get('/:instrumentId', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const result = await query('SELECT * FROM crdn_instruments WHERE instrument_id = $1', [req.params.instrumentId]);

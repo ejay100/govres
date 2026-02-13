@@ -29,6 +29,8 @@ DROP TABLE IF EXISTS oracle_attestations CASCADE;
 DROP TABLE IF EXISTS gold_production_reports CASCADE;
 DROP TABLE IF EXISTS warehouse_entries CASCADE;
 DROP TABLE IF EXISTS cocoa_deliveries CASCADE;
+DROP TABLE IF EXISTS supply_chain_events CASCADE;
+DROP TABLE IF EXISTS cocoa_lots CASCADE;
 DROP TABLE IF EXISTS sensor_readings CASCADE;
 DROP TABLE IF EXISTS vault_sensors CASCADE;
 DROP TABLE IF EXISTS gold_bars CASCADE;
@@ -281,6 +283,89 @@ CREATE TABLE IF NOT EXISTS warehouse_entries (
   export_contract_ref VARCHAR(100),
   stored_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- ============================================================
+-- COCOA SUPPLY CHAIN — Lot Tracking & Events
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS cocoa_lots (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  lot_guid VARCHAR(100) UNIQUE NOT NULL,
+  farmer_id VARCHAR(50) NOT NULL,
+  farmer_name VARCHAR(255),
+  farm_gps_lat DECIMAL(10,7),
+  farm_gps_lng DECIMAL(10,7),
+  lbc_id VARCHAR(50),
+  lbc_name VARCHAR(255),
+  depot_id VARCHAR(100),
+  depot_name VARCHAR(255),
+  region VARCHAR(50) NOT NULL,
+  district VARCHAR(100),
+  community VARCHAR(100),
+  weight_kg DECIMAL(12,4),
+  bags_count INT DEFAULT 0,
+  moisture_percent DECIMAL(5,2),
+  quality_grade VARCHAR(20) CHECK (quality_grade IN ('GRADE_1', 'GRADE_2', 'SUB_STANDARD', 'UNGRADED')),
+  season_year VARCHAR(10) NOT NULL,
+  status VARCHAR(20) NOT NULL DEFAULT 'DELIVERED' CHECK (status IN (
+    'DELIVERED', 'WEIGHED', 'GRADED', 'SEALED', 'IN_TRANSIT',
+    'TAKEN_OVER', 'PROCESSING', 'EXPORTED', 'REJECTED'
+  )),
+  qcc_certificate_id VARCHAR(100),
+  qcc_inspector_id VARCHAR(50),
+  seal_number VARCHAR(100),
+  transporter_id VARCHAR(50),
+  transport_vehicle VARCHAR(100),
+  cmc_take_over_id VARCHAR(100),
+  cmc_take_over_weight_kg DECIMAL(12,4),
+  export_contract_ref VARCHAR(100),
+  processor_id VARCHAR(50),
+  crdn_instrument_id VARCHAR(100),
+  delivered_at TIMESTAMPTZ DEFAULT NOW(),
+  weighed_at TIMESTAMPTZ,
+  graded_at TIMESTAMPTZ,
+  sealed_at TIMESTAMPTZ,
+  transport_started_at TIMESTAMPTZ,
+  taken_over_at TIMESTAMPTZ,
+  processing_started_at TIMESTAMPTZ,
+  exported_at TIMESTAMPTZ,
+  verification_hash VARCHAR(64),
+  metadata JSONB DEFAULT '{}',
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_lot_guid ON cocoa_lots(lot_guid);
+CREATE INDEX IF NOT EXISTS idx_lot_farmer ON cocoa_lots(farmer_id);
+CREATE INDEX IF NOT EXISTS idx_lot_lbc ON cocoa_lots(lbc_id);
+CREATE INDEX IF NOT EXISTS idx_lot_status ON cocoa_lots(status);
+CREATE INDEX IF NOT EXISTS idx_lot_region ON cocoa_lots(region);
+CREATE INDEX IF NOT EXISTS idx_lot_season ON cocoa_lots(season_year);
+CREATE INDEX IF NOT EXISTS idx_lot_grade ON cocoa_lots(quality_grade);
+
+CREATE TABLE IF NOT EXISTS supply_chain_events (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  event_id VARCHAR(100) UNIQUE NOT NULL,
+  lot_guid VARCHAR(100) NOT NULL REFERENCES cocoa_lots(lot_guid),
+  event_type VARCHAR(30) NOT NULL CHECK (event_type IN (
+    'FARMGATE_DELIVERY', 'WEIGH_IN', 'QUALITY_CHECK', 'GRADE_ASSIGN',
+    'QCC_SEAL', 'TRANSPORT_START', 'TRANSPORT_CHECKPOINT',
+    'CMC_TAKE_OVER', 'PROCESSING_START', 'EXPORT_SHIP', 'CRDN_ISSUED'
+  )),
+  actor_id VARCHAR(50) NOT NULL,
+  actor_role VARCHAR(30) NOT NULL,
+  actor_name VARCHAR(255),
+  location_gps_lat DECIMAL(10,7),
+  location_gps_lng DECIMAL(10,7),
+  data JSONB DEFAULT '{}',
+  signature_hash VARCHAR(64),
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_sce_lot ON supply_chain_events(lot_guid);
+CREATE INDEX IF NOT EXISTS idx_sce_type ON supply_chain_events(event_type);
+CREATE INDEX IF NOT EXISTS idx_sce_actor ON supply_chain_events(actor_id);
+CREATE INDEX IF NOT EXISTS idx_sce_time ON supply_chain_events(created_at);
 
 -- ============================================================
 -- ORACLE — GoldBod Royalties

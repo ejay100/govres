@@ -74,17 +74,17 @@ export function AgencyPortal() {
     <DashboardLayout title="Government Agency Portal">
       {/* Summary */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-        <div className="bg-white rounded-xl p-5 shadow-sm border-t-4 border-yellow-500">
-          <p className="text-xs text-gray-500 uppercase">Submitted</p>
-          <p className="text-2xl font-bold mt-1">{submitted}</p>
+        <div className="bg-[#1A1A2E] rounded-xl p-5 shadow-sm border-t-4 border-yellow-500">
+          <p className="text-xs text-gray-400 uppercase">Submitted</p>
+          <p className="text-2xl font-bold text-white mt-1">{submitted}</p>
         </div>
-        <div className="bg-white rounded-xl p-5 shadow-sm border-t-4 border-govres-green">
-          <p className="text-xs text-gray-500 uppercase">Active</p>
-          <p className="text-2xl font-bold mt-1">{approved}</p>
+        <div className="bg-[#1A1A2E] rounded-xl p-5 shadow-sm border-t-4 border-govres-green">
+          <p className="text-xs text-gray-400 uppercase">Active</p>
+          <p className="text-2xl font-bold text-white mt-1">{approved}</p>
         </div>
-        <div className="bg-white rounded-xl p-5 shadow-sm border-t-4 border-govres-gold">
-          <p className="text-xs text-gray-500 uppercase">Total Budget</p>
-          <p className="text-2xl font-bold mt-1">{fmtCedi(totalBudget)}</p>
+        <div className="bg-[#1A1A2E] rounded-xl p-5 shadow-sm border-t-4 border-govres-gold">
+          <p className="text-xs text-gray-400 uppercase">Total Budget</p>
+          <p className="text-2xl font-bold text-white mt-1">{fmtCedi(totalBudget)}</p>
         </div>
       </div>
 
@@ -100,20 +100,20 @@ export function AgencyPortal() {
 
       {/* New Project Form */}
       {showForm && (
-        <div className="bg-white rounded-xl p-6 shadow-sm mb-6">
-          <h2 className="text-lg font-semibold mb-4">New Project Submission</h2>
+        <div className="bg-[#1A1A2E] rounded-xl p-6 shadow-sm border border-white/10 mb-6">
+          <h2 className="text-lg font-semibold text-white mb-4">New Project Submission</h2>
           <form onSubmit={handleCreate} className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Project Name</label>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Project Name</label>
               <input type="text" value={form.projectName}
                 onChange={e => setForm(p => ({ ...p, projectName: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" required />
+                className="w-full px-3 py-2 border border-white/10 bg-[#222236] text-white rounded-lg text-sm" required />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Region</label>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Region</label>
               <select value={form.region}
                 onChange={e => setForm(p => ({ ...p, region: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" required>
+                className="w-full px-3 py-2 border border-white/10 bg-[#222236] text-white rounded-lg text-sm" required>
                 <option value="">Select region…</option>
                 {['Greater Accra', 'Ashanti', 'Western', 'Eastern', 'Central', 'Northern',
                   'Volta', 'Upper East', 'Upper West', 'Bono', 'Bono East', 'Ahafo',
@@ -123,28 +123,28 @@ export function AgencyPortal() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Total Budget (GH₵)</label>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Total Budget (GH₵)</label>
               <input type="number" step="0.01" value={form.totalBudgetCedi}
                 onChange={e => setForm(p => ({ ...p, totalBudgetCedi: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" required />
+                className="w-full px-3 py-2 border border-white/10 bg-[#222236] text-white rounded-lg text-sm" required />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Contractor ID</label>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Contractor ID</label>
               <input type="text" value={form.contractorId}
                 onChange={e => setForm(p => ({ ...p, contractorId: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" placeholder="CONTRACTOR-001" required />
+                className="w-full px-3 py-2 border border-white/10 bg-[#222236] text-white rounded-lg text-sm" placeholder="CONTRACTOR-001" required />
             </div>
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Description</label>
               <textarea value={form.description}
                 onChange={e => setForm(p => ({ ...p, description: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm" rows={2} required />
+                className="w-full px-3 py-2 border border-white/10 bg-[#222236] text-white rounded-lg text-sm" rows={2} required />
             </div>
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Milestones (comma-separated)</label>
+              <label className="block text-sm font-medium text-gray-300 mb-1">Milestones (comma-separated)</label>
               <input type="text" value={form.milestones}
                 onChange={e => setForm(p => ({ ...p, milestones: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+                className="w-full px-3 py-2 border border-white/10 bg-[#222236] text-white rounded-lg text-sm"
                 placeholder="Land survey, Foundation, Superstructure, Finishing, Handover" required />
             </div>
 
@@ -165,16 +165,16 @@ export function AgencyPortal() {
       )}
 
       {/* Projects Table */}
-      <div className="bg-white rounded-xl p-6 shadow-sm">
-        <h2 className="text-lg font-semibold mb-4">All Projects</h2>
+      <div className="bg-[#1A1A2E] rounded-xl p-6 shadow-sm border border-white/10">
+        <h2 className="text-lg font-semibold text-white mb-4">All Projects</h2>
         {isLoading ? (
           <p className="text-gray-400 py-4">Loading…</p>
         ) : projects.length === 0 ? (
           <p className="text-gray-400 py-4">No projects found.</p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-sm text-left">
-              <thead className="text-xs text-gray-500 uppercase border-b">
+            <table className="w-full text-sm text-left text-gray-300">
+              <thead className="text-xs text-gray-400 uppercase border-b border-white/10">
                 <tr>
                   <th className="py-2 pr-3">Project</th>
                   <th className="py-2 pr-3">Region</th>
@@ -186,9 +186,9 @@ export function AgencyPortal() {
               </thead>
               <tbody>
                 {projects.map((p: any) => (
-                  <tr key={p.project_id} className="border-b last:border-0">
+                  <tr key={p.project_id} className="border-b border-white/10 last:border-0">
                     <td className="py-3 pr-3">
-                      <p className="font-medium">{p.project_name}</p>
+                      <p className="font-medium text-white">{p.project_name}</p>
                       <p className="text-xs text-gray-400">{p.project_id?.slice(0, 12)}…</p>
                     </td>
                     <td className="py-3 pr-3">{p.region ?? '—'}</td>
@@ -196,11 +196,11 @@ export function AgencyPortal() {
                     <td className="py-3 pr-3">{fmtCedi(p.disbursed_cedi)}</td>
                     <td className="py-3 pr-3">
                       <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                        p.status === 'APPROVED' ? 'bg-green-100 text-green-800' :
-                        p.status === 'IN_PROGRESS' ? 'bg-blue-100 text-blue-800' :
-                        p.status === 'SUBMITTED' ? 'bg-yellow-100 text-yellow-800' :
-                        p.status === 'COMPLETED' ? 'bg-purple-100 text-purple-800' :
-                        'bg-gray-100 text-gray-600'
+                        p.status === 'APPROVED' ? 'bg-emerald-900/40 text-emerald-400' :
+                        p.status === 'IN_PROGRESS' ? 'bg-blue-900/40 text-blue-400' :
+                        p.status === 'SUBMITTED' ? 'bg-amber-900/40 text-amber-400' :
+                        p.status === 'COMPLETED' ? 'bg-purple-900/40 text-purple-400' :
+                        'bg-gray-800 text-gray-400'
                       }`}>{p.status}</span>
                     </td>
                     <td className="py-3">

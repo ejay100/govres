@@ -11,7 +11,7 @@ import { AppError } from '../middleware/error-handler';
 
 const router = Router();
 
-/** POST /api/v1/projects — Submit a new project */
+/* POST /api/v1/projects — Submit a new project */
 router.post('/', requireRole(UserRole.GOVT_AGENCY), async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { projectName, description, budgetGBDC, contractors, milestones } = req.body;
@@ -42,7 +42,7 @@ router.post('/', requireRole(UserRole.GOVT_AGENCY), async (req: Request, res: Re
   } catch (error) { next(error); }
 });
 
-/** PUT /api/v1/projects/:projectId/approve */
+/* PUT /api/v1/projects/:projectId/approve */
 router.put('/:projectId/approve', requireRole(UserRole.BOG_ADMIN), async (req: Request, res: Response, next: NextFunction) => {
   try {
     const result = await query(
@@ -55,7 +55,7 @@ router.put('/:projectId/approve', requireRole(UserRole.BOG_ADMIN), async (req: R
   } catch (error) { next(error); }
 });
 
-/** POST /api/v1/projects/:projectId/disburse */
+/* POST /api/v1/projects/:projectId/disburse */
 router.post('/:projectId/disburse', requireRole(UserRole.BOG_ADMIN, UserRole.GOVT_AGENCY), async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { milestoneId, contractorId, amountGBDC } = req.body;
@@ -74,7 +74,7 @@ router.post('/:projectId/disburse', requireRole(UserRole.BOG_ADMIN, UserRole.GOV
   } catch (error) { next(error); }
 });
 
-/** GET /api/v1/projects/:projectId */
+/* GET /api/v1/projects/:projectId */
 router.get('/:projectId', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const project = await query('SELECT * FROM government_projects WHERE project_id = $1', [req.params.projectId]);
@@ -84,7 +84,7 @@ router.get('/:projectId', async (req: Request, res: Response, next: NextFunction
   } catch (error) { next(error); }
 });
 
-/** GET /api/v1/projects */
+/* GET /api/v1/projects */
 router.get('/', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const page = parseInt(req.query.page as string) || 1;

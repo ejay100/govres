@@ -8,13 +8,13 @@
 
 // ─── Enums ───────────────────────────────────────────────────────
 
-/** Instrument types on the GOVRES ledger */
+/* Instrument types on the GOVRES ledger */
 export enum InstrumentType {
   GBDC = 'GBDC',   // Gold-Backed Digital Cedi
   CRDN = 'CRDN',   // Cocoa Receipt Digital Note
 }
 
-/** Transaction states on the ledger */
+/* Transaction states on the ledger */
 export enum TransactionStatus {
   PENDING = 'PENDING',
   CONFIRMED = 'CONFIRMED',
@@ -23,7 +23,7 @@ export enum TransactionStatus {
   REVERSED = 'REVERSED',
 }
 
-/** User roles aligned with whitepaper Layer 3 */
+/* User roles aligned with whitepaper Layer 3 */
 export enum UserRole {
   BOG_ADMIN = 'BOG_ADMIN',             // Bank of Ghana / Treasury
   BOG_AUDITOR = 'BOG_AUDITOR',         // BoG Audit & Compliance
@@ -36,7 +36,7 @@ export enum UserRole {
   PUBLIC = 'PUBLIC',                    // Public Dashboard (read-only)
 }
 
-/** Oracle data source types */
+/* Oracle data source types */
 export enum OracleSourceType {
   VAULT_SENSOR = 'VAULT_SENSOR',           // Gold vault weight sensors
   ASSAY_FINGERPRINT = 'ASSAY_FINGERPRINT', // Gold bar assay fingerprint
@@ -46,14 +46,14 @@ export enum OracleSourceType {
   COCOBOD_FEED = 'COCOBOD_FEED',          // Cocobod data feed
 }
 
-/** Asset types backing instruments */
+/* Asset types backing instruments */
 export enum AssetType {
   GOLD = 'GOLD',
   COCOA = 'COCOA',
   MINERAL_ROYALTY = 'MINERAL_ROYALTY',
 }
 
-/** Settlement channel */
+/* Settlement channel */
 export enum SettlementChannel {
   INTERBANK = 'INTERBANK',
   MOMO = 'MOMO',           // Mobile Money (MTN MoMo, Vodafone Cash, AirtelTigo Money)
@@ -61,7 +61,7 @@ export enum SettlementChannel {
   ECEDI = 'ECEDI',         // Future eCedi CBDC
 }
 
-/** CRDN lifecycle states */
+/* CRDN lifecycle states */
 export enum CRDNStatus {
   ISSUED = 'ISSUED',             // Issued at farm-gate delivery
   HELD = 'HELD',                 // Held by farmer/LBC
@@ -71,7 +71,28 @@ export enum CRDNStatus {
   CANCELLED = 'CANCELLED',       // Cancelled by issuer
 }
 
-/** GBDC lifecycle states */
+/* Cocoa supply-chain lot status (farmgate → export) */
+export enum CocoaLotStatus {
+  DELIVERED = 'DELIVERED',           // Farmer delivered at LBC depot
+  WEIGHED = 'WEIGHED',              // Weight recorded electronically
+  GRADED = 'GRADED',                // QCC quality checked & graded
+  SEALED = 'SEALED',                // Graded sacks sealed by QCC
+  IN_TRANSIT = 'IN_TRANSIT',        // Being transported to CMC take-over center
+  TAKEN_OVER = 'TAKEN_OVER',        // CMC formal take-over complete
+  PROCESSING = 'PROCESSING',        // At local processing plant
+  EXPORTED = 'EXPORTED',            // Shipped to international buyer
+  REJECTED = 'REJECTED',            // Failed quality grading
+}
+
+/* Cocoa quality grades per QCC standards */
+export enum CocoaQualityGrade {
+  GRADE_1 = 'GRADE_1',       // Export quality
+  GRADE_2 = 'GRADE_2',       // Acceptable
+  SUB_STANDARD = 'SUB_STANDARD', // Below export grade
+  UNGRADED = 'UNGRADED',     // Awaiting QCC inspection
+}
+
+/* GBDC lifecycle states */
 export enum GBDCStatus {
   MINTED = 'MINTED',           // Newly minted against gold reserves
   CIRCULATING = 'CIRCULATING', // In circulation
@@ -82,7 +103,7 @@ export enum GBDCStatus {
 
 // ─── Core Interfaces ────────────────────────────────────────────
 
-/** Base entity with audit fields */
+/* Base entity with audit fields */
 export interface BaseEntity {
   id: string;
   createdAt: Date;
@@ -91,7 +112,7 @@ export interface BaseEntity {
   version: number; // Optimistic concurrency control
 }
 
-/** Gold bar record in the reserve */
+/* Gold bar record in the reserve */
 export interface GoldBar extends BaseEntity {
   barId: string;                   // Unique bar identifier
   assayFingerprint: string;        // Unique assay signature
@@ -105,7 +126,7 @@ export interface GoldBar extends BaseEntity {
   sensorReadings: SensorReading[];
 }
 
-/** Sensor reading from vault oracle */
+/* Sensor reading from vault oracle */
 export interface SensorReading {
   sensorId: string;
   timestamp: Date;
@@ -116,7 +137,7 @@ export interface SensorReading {
   signatureHash: string;           // Cryptographic signature of reading
 }
 
-/** Cocoa warehouse receipt */
+/* Cocoa warehouse receipt */
 export interface CocoaReceipt extends BaseEntity {
   receiptId: string;               // Unique receipt ID
   warehouseId: string;             // Warehouse location
@@ -132,7 +153,7 @@ export interface CocoaReceipt extends BaseEntity {
   verificationHash: string;        // Hash of receipt data for tamper detection
 }
 
-/** GBDC instrument on the ledger */
+/* GBDC instrument on the ledger */
 export interface GBDC extends BaseEntity {
   instrumentId: string;
   type: InstrumentType.GBDC;
@@ -149,7 +170,7 @@ export interface GBDC extends BaseEntity {
   metadata: Record<string, unknown>;
 }
 
-/** CRDN instrument on the ledger */
+/* CRDN instrument on the ledger */
 export interface CRDN extends BaseEntity {
   instrumentId: string;
   type: InstrumentType.CRDN;
@@ -166,7 +187,7 @@ export interface CRDN extends BaseEntity {
   metadata: Record<string, unknown>;
 }
 
-/** Ledger transaction record */
+/* Ledger transaction record */
 export interface LedgerTransaction extends BaseEntity {
   txId: string;                    // Unique transaction hash
   instrumentType: InstrumentType;
@@ -183,7 +204,7 @@ export interface LedgerTransaction extends BaseEntity {
   auditTrail: AuditEntry[];
 }
 
-/** Audit trail entry */
+/* Audit trail entry */
 export interface AuditEntry {
   timestamp: Date;
   action: string;
@@ -194,7 +215,7 @@ export interface AuditEntry {
   signatureHash: string;
 }
 
-/** User account on the system */
+/* User account on the system */
 export interface UserAccount extends BaseEntity {
   accountId: string;
   role: UserRole;
@@ -209,7 +230,7 @@ export interface UserAccount extends BaseEntity {
   lastLoginAt?: Date;
 }
 
-/** Government project for contractor payment */
+/* Government project for contractor payment */
 export interface GovernmentProject extends BaseEntity {
   projectId: string;
   agencyId: string;                // Submitting agency
@@ -224,7 +245,7 @@ export interface GovernmentProject extends BaseEntity {
   milestones: ProjectMilestone[];
 }
 
-/** Project milestone for tracking disbursement */
+/* Project milestone for tracking disbursement */
 export interface ProjectMilestone {
   milestoneId: string;
   description: string;
@@ -235,7 +256,7 @@ export interface ProjectMilestone {
   verifiedBy?: string;
 }
 
-/** Diaspora yield note */
+/* Diaspora yield note */
 export interface YieldNote extends BaseEntity {
   noteId: string;
   assetType: AssetType;
@@ -247,7 +268,7 @@ export interface YieldNote extends BaseEntity {
   status: 'ACTIVE' | 'MATURED' | 'REDEEMED' | 'CANCELLED';
 }
 
-/** Oracle attestation record */
+/* Oracle attestation record */
 export interface OracleAttestation extends BaseEntity {
   attestationId: string;
   sourceType: OracleSourceType;
@@ -260,7 +281,7 @@ export interface OracleAttestation extends BaseEntity {
   expiresAt: Date;                 // Attestation validity window
 }
 
-/** Reserve summary for public dashboard */
+/* Reserve summary for public dashboard */
 export interface ReserveSummary {
   timestamp: Date;
   goldReserves: {
@@ -289,7 +310,7 @@ export interface ReserveSummary {
   };
 }
 
-/** CBDC interoperability types */
+/* CBDC interoperability types */
 export interface ECediTransaction {
   ecediTxId: string;
   govresTxId: string;
@@ -300,7 +321,7 @@ export interface ECediTransaction {
   timestamp: Date;
 }
 
-/** Bank settlement record */
+/* Bank settlement record */
 export interface BankSettlement extends BaseEntity {
   settlementId: string;
   bankId: string;
@@ -314,7 +335,7 @@ export interface BankSettlement extends BaseEntity {
   referenceNumber: string;
 }
 
-/** MoMo (Mobile Money) transaction */
+/* MoMo (Mobile Money) transaction */
 export interface MoMoTransaction extends BaseEntity {
   momoTxId: string;
   govresTxId: string;
@@ -328,7 +349,7 @@ export interface MoMoTransaction extends BaseEntity {
 
 // ─── API Types ──────────────────────────────────────────────────
 
-/** Standard API response wrapper */
+/* Standard API response wrapper */
 export interface ApiResponse<T> {
   success: boolean;
   data?: T;
@@ -345,10 +366,78 @@ export interface ApiResponse<T> {
   };
 }
 
-/** Pagination parameters */
+/* Pagination parameters */
 export interface PaginationParams {
   page: number;
   pageSize: number;
   sortBy?: string;
   sortOrder?: 'asc' | 'desc';
+}
+
+// ─── Cocoa Supply Chain Interfaces ──────────────────────────────
+
+/* Cocoa lot — core unit tracked from farm to export */
+export interface CocoaLot extends BaseEntity {
+  lotGuid: string;                    // Globally unique identifier (GCTS)
+  farmerId: string;                   // Farmer account ID
+  farmerName: string;                 // Farmer name
+  farmGpsLat: number;                 // Farm GPS latitude
+  farmGpsLng: number;                 // Farm GPS longitude
+  lbcId: string;                      // Licensed Buying Company ID
+  lbcName: string;                    // LBC name
+  depotId: string;                    // Weighing station / depot ID
+  depotName: string;                  // Depot name
+  region: string;                     // Cocoa region
+  district: string;                   // District
+  community: string;                  // Community name
+  weightKg: number;                   // Weight in kg at delivery
+  bagsCount: number;                  // Number of 64kg standard bags
+  moisturePercent?: number;           // Moisture content %
+  qualityGrade: CocoaQualityGrade;    // QCC grade
+  seasonYear: string;                 // e.g., "2025/2026"
+  status: CocoaLotStatus;            // Current supply chain stage
+  qccCertificateId?: string;          // Quality certificate number
+  qccInspectorId?: string;            // QCC inspector ID
+  transporterId?: string;             // Transport company
+  cmcTakeOverId?: string;             // CMC take-over reference
+  exportContractRef?: string;         // Export contract reference
+  processorId?: string;               // Local processor ID
+  crdnInstrumentId?: string;          // Linked CRDN if issued
+  deliveredAt: Date;                  // Farm-gate delivery timestamp
+  weighedAt?: Date;                   // Weight recording timestamp
+  gradedAt?: Date;                    // QCC grading timestamp
+  sealedAt?: Date;                    // Sack sealing timestamp
+  transportStartedAt?: Date;          // Transport start
+  takenOverAt?: Date;                 // CMC take-over timestamp
+  exportedAt?: Date;                  // Export/ship timestamp
+  verificationHash: string;           // Tamper-proof hash chain
+  metadata: Record<string, unknown>;
+}
+
+/* Supply chain event log entry */
+export interface SupplyChainEvent {
+  eventId: string;
+  lotGuid: string;
+  eventType: 'DELIVERY' | 'WEIGHING' | 'GRADING' | 'SEALING' | 'TRANSPORT_START' | 'TAKE_OVER' | 'PROCESSING' | 'EXPORT' | 'CRDN_ISSUED' | 'REJECTION';
+  actorId: string;
+  actorRole: UserRole;
+  actorName: string;
+  locationGpsLat?: number;
+  locationGpsLng?: number;
+  data: Record<string, unknown>;
+  timestamp: Date;
+  signatureHash: string;
+}
+
+/* Aggregated supply chain dashboard stats */
+export interface SupplyChainStats {
+  totalLots: number;
+  totalWeightKg: number;
+  totalBags: number;
+  byStatus: Record<CocoaLotStatus, number>;
+  byGrade: Record<CocoaQualityGrade, number>;
+  byRegion: Record<string, number>;
+  crdnIssued: number;
+  crdnValueCedi: number;
+  seasonYear: string;
 }

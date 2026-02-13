@@ -53,13 +53,13 @@ export interface TransactionComplianceInput {
  * AML thresholds per Bank of Ghana Anti-Money Laundering Act 1044
  */
 const AML_THRESHOLDS = {
-  /** Cash Transaction Report threshold (GH¢) */
+  /* Cash Transaction Report threshold (GH¢) */
   CTR_THRESHOLD: 50_000,
-  /** Suspicious Transaction Report threshold (GH¢) — structuring detection */
+  /* Suspicious Transaction Report threshold (GH¢) — structuring detection */
   STR_AGGREGATE_24H: 100_000,
-  /** Enhanced Due Diligence threshold (GH¢) */
+  /* Enhanced Due Diligence threshold (GH¢) */
   EDD_THRESHOLD: 500_000,
-  /** Politically Exposed Persons additional checks threshold (GH¢) */
+  /* Politically Exposed Persons additional checks threshold (GH¢) */
   PEP_THRESHOLD: 20_000,
 };
 

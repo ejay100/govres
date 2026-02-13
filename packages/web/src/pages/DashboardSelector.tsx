@@ -235,6 +235,12 @@ export function DashboardSelector() {
               Public Reserve Dashboard
             </Link>
             <Link
+              to="/supply-chain"
+              className="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-govres-gold text-sm transition-colors"
+            >
+              🌱 Cocoa Supply Chain
+            </Link>
+            <Link
               to="/"
               className="px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-white text-sm transition-colors"
             >

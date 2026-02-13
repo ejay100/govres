@@ -128,4 +128,21 @@ export const cbdcAPI = {
   smartRoute: (data: any) => api.post('/cbdc/smart-route', data),
 };
 
+// ─── Cocoa Supply Chain ────────────────────────────────────────
+
+export const supplyChainAPI = {
+  stats: () => api.get('/supply-chain/stats'),
+  listLots: (params?: Record<string, any>) => api.get('/supply-chain/lots', { params }),
+  getLot: (lotGuid: string) => api.get(`/supply-chain/lots/${lotGuid}`),
+  deliver: (data: any) => api.post('/supply-chain/lots/deliver', data),
+  weigh: (lotGuid: string, data: any) => api.put(`/supply-chain/lots/${lotGuid}/weigh`, data),
+  grade: (lotGuid: string, data: any) => api.put(`/supply-chain/lots/${lotGuid}/grade`, data),
+  seal: (lotGuid: string, data: any) => api.put(`/supply-chain/lots/${lotGuid}/seal`, data),
+  transport: (lotGuid: string, data: any) => api.put(`/supply-chain/lots/${lotGuid}/transport`, data),
+  takeOver: (lotGuid: string, data: any) => api.put(`/supply-chain/lots/${lotGuid}/take-over`, data),
+  process: (lotGuid: string, data: any) => api.put(`/supply-chain/lots/${lotGuid}/process`, data),
+  exportLot: (lotGuid: string, data: any) => api.put(`/supply-chain/lots/${lotGuid}/export`, data),
+  issueCRDN: (lotGuid: string, data: any) => api.post(`/supply-chain/lots/${lotGuid}/crdn`, data),
+};
+
 export default api;

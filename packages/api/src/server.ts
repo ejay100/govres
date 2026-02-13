@@ -28,6 +28,7 @@ import { dashboardRoutes } from './routes/dashboard';
 import { projectRoutes } from './routes/project';
 import { cbdcRoutes } from './routes/cbdc';
 import { authRoutes } from './routes/auth';
+import { supplyChainRoutes } from './routes/supply-chain';
 
 dotenv.config();
 
@@ -97,6 +98,7 @@ app.use('/api/v1/oracle', authMiddleware, oracleRoutes);
 app.use('/api/v1/settlement', authMiddleware, settlementRoutes);
 app.use('/api/v1/projects', authMiddleware, projectRoutes);
 app.use('/api/v1/cbdc', authMiddleware, cbdcRoutes);
+app.use('/api/v1/supply-chain', authMiddleware, supplyChainRoutes);
 
 // ─── Error Handling ─────────────────────────────────────────────
 

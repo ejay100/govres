@@ -14,6 +14,7 @@ import { FarmerPortal } from './pages/FarmerPortal';
 import { ContractorPortal } from './pages/ContractorPortal';
 import { AgencyPortal } from './pages/AgencyPortal';
 import { DiasporaPortal } from './pages/DiasporaPortal';
+import { CocoaSupplyChain } from './pages/CocoaSupplyChain';
 import { ProtectedRoute } from './components/ProtectedRoute';
 
 export default function App() {
@@ -56,6 +57,11 @@ export default function App() {
       <Route path="/diaspora/*" element={
         <ProtectedRoute allowedRoles={['DIASPORA']}>
           <DiasporaPortal />
+        </ProtectedRoute>
+      } />
+      <Route path="/supply-chain/*" element={
+        <ProtectedRoute allowedRoles={['BOG_ADMIN', 'BOG_AUDITOR', 'FARMER', 'LBC', 'GOVT_AGENCY']}>
+          <CocoaSupplyChain />
         </ProtectedRoute>
       } />
 

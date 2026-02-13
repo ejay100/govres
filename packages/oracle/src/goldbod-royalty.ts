@@ -89,7 +89,7 @@ export class GoldBodRoyaltyOracle extends EventEmitter {
   private royaltyNotes: Map<string, RoyaltyBackedNote> = new Map();
   private attestations: Map<string, OracleAttestation> = new Map();
 
-  /** Standard royalty rate per Minerals & Mining Act 2006 (Act 703) */
+  /* Standard royalty rate per Minerals & Mining Act 2006 (Act 703) */
   private readonly ROYALTY_RATE = 0.05;
 
   constructor() {

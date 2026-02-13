@@ -28,7 +28,7 @@ function ServiceCard({
 
   return (
     <div
-      className={`bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all group border border-gray-100 cursor-pointer ${open ? 'ring-2 ring-govres-gold/30' : ''}`}
+      className={`bg-[#1A1A2E] rounded-2xl shadow-sm hover:shadow-lg transition-all group border border-white/10 cursor-pointer ${open ? 'ring-2 ring-govres-gold/30' : ''}`}
       onClick={() => setOpen(!open)}
     >
       <div className="p-7">
@@ -38,13 +38,13 @@ function ServiceCard({
           </div>
           {stat && (
             <div className="text-right">
-              <p className="text-lg font-bold text-govres-navy">{stat}</p>
+              <p className="text-lg font-bold text-white">{stat}</p>
               <p className="text-[10px] text-gray-400">{statLabel}</p>
             </div>
           )}
         </div>
-        <h3 className="text-lg font-bold mb-2 text-govres-navy">{title}</h3>
-        <p className="text-sm text-gray-500 leading-relaxed">{description}</p>
+        <h3 className="text-lg font-bold mb-2 text-white">{title}</h3>
+        <p className="text-sm text-gray-400 leading-relaxed">{description}</p>
 
         {/* Expand indicator */}
         <button className="mt-3 text-xs text-govres-green font-medium flex items-center gap-1 hover:underline">
@@ -57,10 +57,10 @@ function ServiceCard({
 
       {/* Expanded detail panel */}
       {open && (
-        <div className="px-7 pb-7 pt-0 border-t border-gray-100">
+        <div className="px-7 pb-7 pt-0 border-t border-white/10">
           <ul className="mt-4 space-y-2">
             {details.map((d, i) => (
-              <li key={i} className="flex items-start gap-2 text-xs text-gray-600">
+              <li key={i} className="flex items-start gap-2 text-xs text-gray-400">
                 <svg className="w-4 h-4 text-govres-green shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
@@ -82,8 +82,8 @@ function StepCard({ n, title, text }: { n: number; title: string; text: string }
       <div className="absolute left-0 top-0 w-11 h-11 rounded-full bg-govres-gold text-govres-navy flex items-center justify-center font-bold text-lg shadow-md">
         {n}
       </div>
-      <h4 className="text-base font-bold text-govres-navy mb-1">{title}</h4>
-      <p className="text-sm text-gray-500 leading-relaxed">{text}</p>
+      <h4 className="text-base font-bold text-white mb-1">{title}</h4>
+      <p className="text-sm text-gray-400 leading-relaxed">{text}</p>
     </div>
   );
 }
@@ -109,7 +109,7 @@ export function LandingPage() {
   const m = metrics?.data;
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#0D0D14]">
       <Navbar />
 
       {/* ═══════════════════ HERO ═══════════════════ */}
@@ -182,45 +182,45 @@ export function LandingPage() {
 
         {/* Bottom wave */}
         <div className="relative">
-          <svg className="w-full h-16 text-white" viewBox="0 0 1200 60" preserveAspectRatio="none">
+          <svg className="w-full h-16 text-[#0D0D14]" viewBox="0 0 1200 60" preserveAspectRatio="none">
             <path d="M0 60V30Q300 0 600 30T1200 30V60Z" fill="currentColor" />
           </svg>
         </div>
       </section>
 
       {/* ═══════════════════ LIVE STATS BAR ═══════════════════ */}
-      <section className="bg-white -mt-1">
+      <section className="bg-[#0D0D14] -mt-1">
         <div className="max-w-7xl mx-auto px-6 py-8">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 text-center">
             <div>
-              <p className="text-2xl font-bold text-govres-navy">{fmt(r?.goldReserve?.totalOunces) ?? '—'}</p>
-              <p className="text-xs text-gray-400 mt-1">Gold Reserve (oz)</p>
+              <p className="text-2xl font-bold text-govres-gold">{fmt(r?.goldReserve?.totalOunces) ?? '—'}</p>
+              <p className="text-xs text-gray-500 mt-1">Gold Reserve (oz)</p>
             </div>
             <div>
-              <p className="text-2xl font-bold text-govres-navy">{fmt(r?.cocoaReserve?.totalTonnes) ?? '—'}</p>
-              <p className="text-xs text-gray-400 mt-1">Cocoa Reserve (MT)</p>
+              <p className="text-2xl font-bold text-white">{fmt(r?.cocoaReserve?.totalTonnes) ?? '—'}</p>
+              <p className="text-xs text-gray-500 mt-1">Cocoa Reserve (MT)</p>
             </div>
             <div>
-              <p className="text-2xl font-bold text-govres-green">{fmtCedi(r?.gbdcCirculation?.totalValue) ?? '—'}</p>
-              <p className="text-xs text-gray-400 mt-1">GBDC in Circulation</p>
+              <p className="text-2xl font-bold text-emerald-400">{fmtCedi(r?.gbdcCirculation?.totalValue) ?? '—'}</p>
+              <p className="text-xs text-gray-500 mt-1">GBDC in Circulation</p>
             </div>
             <div>
-              <p className="text-2xl font-bold text-govres-navy">{fmt(m?.totalTransactions) ?? '—'}</p>
-              <p className="text-xs text-gray-400 mt-1">Settlement Transactions</p>
+              <p className="text-2xl font-bold text-white">{fmt(m?.totalTransactions) ?? '—'}</p>
+              <p className="text-xs text-gray-500 mt-1">Settlement Transactions</p>
             </div>
           </div>
         </div>
       </section>
 
       {/* ═══════════════════ SERVICES ═══════════════════ */}
-      <section id="services" className="bg-gray-50 scroll-mt-20">
+      <section id="services" className="bg-[#0a0e1a] scroll-mt-20">
         <div className="max-w-7xl mx-auto px-6 py-20">
           <div className="text-center mb-14">
             <p className="text-sm font-semibold text-govres-gold uppercase tracking-widest mb-2">Services</p>
-            <h2 className="text-3xl font-extrabold text-govres-navy">
+            <h2 className="text-3xl font-extrabold text-white">
               Digital Instruments & Portals
             </h2>
-            <p className="mt-3 text-gray-500 max-w-2xl mx-auto text-sm">
+            <p className="mt-3 text-gray-400 max-w-2xl mx-auto text-sm">
               GOVRES provides role-based access to Ghana's programmable settlement infrastructure,
               connecting the Bank of Ghana, commercial banks, farmers, contractors, agencies, and the diaspora.
             </p>
@@ -322,13 +322,13 @@ export function LandingPage() {
       </section>
 
       {/* ═══════════════════ HOW IT WORKS ═══════════════════ */}
-      <section id="how-it-works" className="bg-white scroll-mt-20">
+      <section id="how-it-works" className="bg-[#0D0D14] scroll-mt-20">
         <div className="max-w-7xl mx-auto px-6 py-20">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             {/* Left — text */}
             <div>
               <p className="text-sm font-semibold text-govres-gold uppercase tracking-widest mb-2">How It Works</p>
-              <h2 className="text-3xl font-extrabold text-govres-navy mb-8">
+              <h2 className="text-3xl font-extrabold text-white mb-8">
                 Asset-Backed, Oracle-Verified
               </h2>
 
@@ -410,52 +410,52 @@ export function LandingPage() {
       </section>
 
       {/* ═══════════════════ ABOUT / WHY ═══════════════════ */}
-      <section id="about" className="bg-gray-50 scroll-mt-20">
+      <section id="about" className="bg-[#0a0e1a] scroll-mt-20">
         <div className="max-w-7xl mx-auto px-6 py-20">
           <div className="text-center mb-14">
             <p className="text-sm font-semibold text-govres-gold uppercase tracking-widest mb-2">About</p>
-            <h2 className="text-3xl font-extrabold text-govres-navy">
+            <h2 className="text-3xl font-extrabold text-white">
               Why Ghana Needs GOVRES
             </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <div className="bg-white rounded-2xl p-7 shadow-sm border border-gray-100">
-              <h3 className="font-bold text-govres-navy mb-2 flex items-center gap-2">
+            <div className="bg-[#1A1A2E] rounded-2xl p-7 shadow-sm border border-white/10">
+              <h3 className="font-bold text-white mb-2 flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-govres-red" />
                 Gold Reserve Paradox
               </h3>
-              <p className="text-sm text-gray-500 leading-relaxed">
+              <p className="text-sm text-gray-400 leading-relaxed">
                 Ghana exports ~$20B in gold annually, yet reserves are sold off in liquidity crises.
                 GOVRES keeps gold secured while unlocking its value as settlement backing.
               </p>
             </div>
-            <div className="bg-white rounded-2xl p-7 shadow-sm border border-gray-100">
-              <h3 className="font-bold text-govres-navy mb-2 flex items-center gap-2">
+            <div className="bg-[#1A1A2E] rounded-2xl p-7 shadow-sm border border-white/10">
+              <h3 className="font-bold text-white mb-2 flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-yellow-700" />
                 Cocoa Debt Trap
               </h3>
-              <p className="text-sm text-gray-500 leading-relaxed">
+              <p className="text-sm text-gray-400 leading-relaxed">
                 Cocobod owes ~GH₵32.9B, delaying farmer payments and forcing USD borrowing.
                 CRDN instruments ensure farmers are paid instantly at delivery.
               </p>
             </div>
-            <div className="bg-white rounded-2xl p-7 shadow-sm border border-gray-100">
-              <h3 className="font-bold text-govres-navy mb-2 flex items-center gap-2">
+            <div className="bg-[#1A1A2E] rounded-2xl p-7 shadow-sm border border-white/10">
+              <h3 className="font-bold text-white mb-2 flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-govres-gold" />
                 Asset-Poor Financing
               </h3>
-              <p className="text-sm text-gray-500 leading-relaxed">
+              <p className="text-sm text-gray-400 leading-relaxed">
                 Ghana's economy is financed as if reserves don't exist.
                 GOVRES converts physical assets into live settlement backing.
               </p>
             </div>
-            <div className="bg-white rounded-2xl p-7 shadow-sm border border-gray-100">
-              <h3 className="font-bold text-govres-navy mb-2 flex items-center gap-2">
+            <div className="bg-[#1A1A2E] rounded-2xl p-7 shadow-sm border border-white/10">
+              <h3 className="font-bold text-white mb-2 flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-govres-blue" />
                 Trust & Transparency
               </h3>
-              <p className="text-sm text-gray-500 leading-relaxed">
+              <p className="text-sm text-gray-400 leading-relaxed">
                 Lack of real-time visibility fuels speculation and cedi volatility.
                 GOVRES provides a public dashboard with oracle-verified proof of reserves.
               </p>

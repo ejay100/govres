@@ -4,9 +4,9 @@ build/
 .env
 *.log
 logs/
-**/logs/
+/logs/
 coverage/
-**/coverage/
+/coverage/
 .DS_Store
 Thumbs.db
 *.tsbuildinfo

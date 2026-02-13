@@ -33,15 +33,15 @@ The system provides a sovereign, non-blockchain permissioned ledger for governme
 
  Packages
 
-| Package | Description |
-|---------|-------------|
-| `@govres/shared` | Type definitions, constants, regulatory references |
-| `@govres/ledger` | Permissioned ledger engine (blocks, Merkle trees, validation) |
-| `@govres/oracle` | Oracle layer (gold vault, cocoa warehouse, GoldBod royalty) |
-| `@govres/api` | Express REST API (auth, routes, middleware, DB schema) |
-| `@govres/web` | React frontend (8 portal pages) |
-| `@govres/simulation` | Simulation suite (cocoa flow, contractor payments, stress test) |
-| `@govres/security` | Encryption, audit trails, regulatory compliance engine |
+ Package  Description 
+-
+ `@govres/shared`  Type definitions, constants, regulatory references 
+ `@govres/ledger`  Permissioned ledger engine (blocks, Merkle trees, validation) 
+ `@govres/oracle`  Oracle layer (gold vault, cocoa warehouse, GoldBod royalty) 
+ `@govres/api`  Express REST API (auth, routes, middleware, DB schema) 
+ `@govres/web`  React frontend (8 portal pages) 
+ `@govres/simulation`  Simulation suite (cocoa flow, contractor payments, stress test) 
+ `@govres/security`  Encryption, audit trails, regulatory compliance engine 
 
  Quick Start
 
@@ -87,30 +87,30 @@ docker-compose up -d
 
  Frontend Portals
 
-| Portal | Route | Role |
-|--------|-------|------|
-| Public Dashboard | `/` | Public |
-| Login | `/login` | All |
-| BoG Dashboard | `/bog` | BOG_ADMIN |
-| Bank Dashboard | `/bank` | BANK_ADMIN |
-| Farmer Portal | `/farmer` | FARMER |
-| Contractor Portal | `/contractor` | CONTRACTOR |
-| Agency Portal | `/agency` | GOV_AGENCY |
-| Diaspora Portal | `/diaspora` | DIASPORA_INVESTOR |
+ Portal  Route  Role 
+--
+ Public Dashboard  `/`  Public 
+ Login  `/login`  All 
+ BoG Dashboard  `/bog`  BOG_ADMIN 
+ Bank Dashboard  `/bank`  BANK_ADMIN 
+ Farmer Portal  `/farmer`  FARMER 
+ Contractor Portal  `/contractor`  CONTRACTOR 
+ Agency Portal  `/agency`  GOV_AGENCY 
+ Diaspora Portal  `/diaspora`  DIASPORA_INVESTOR 
 
  API Endpoints
 
-| Route Group | Base Path | Auth Required |
-|-------------|-----------|---------------|
-| Auth | `/api/v1/auth` | No |
-| Dashboard (public) | `/api/v1/dashboard` | No |
-| Ledger | `/api/v1/ledger` | Yes |
-| GBDC | `/api/v1/gbdc` | Yes |
-| CRDN | `/api/v1/crdn` | Yes |
-| Oracle | `/api/v1/oracle` | Yes |
-| Settlement | `/api/v1/settlement` | Yes |
-| Projects | `/api/v1/projects` | Yes |
-| CBDC (eCedi) | `/api/v1/cbdc` | Yes |
+ Route Group  Base Path  Auth Required 
+---
+ Auth  `/api/v1/auth`  No 
+ Dashboard (public)  `/api/v1/dashboard`  No 
+ Ledger  `/api/v1/ledger`  Yes 
+ GBDC  `/api/v1/gbdc`  Yes 
+ CRDN  `/api/v1/crdn`  Yes 
+ Oracle  `/api/v1/oracle`  Yes 
+ Settlement  `/api/v1/settlement`  Yes 
+ Projects  `/api/v1/projects`  Yes 
+ CBDC (eCedi)  `/api/v1/cbdc`  Yes 
 
  Regulatory Compliance
 
@@ -140,15 +140,15 @@ npm run simulate:stress         Ledger stress test
 
  Key Financial Parameters
 
-| Parameter | Value | Source |
-|-----------|-------|--------|
-| Gold reserve allocation | 10% of BoG holdings | Whitepaper §4.1 |
-| Money multiplier | 2.5× | BoG monetary policy |
-| Cocoa producer price | GH¢2,070/bag (64kg) | Cocobod 2024/2025 |
-| Annual gold royalty rate | 5% | Act 703 |
-| Annual cocoa receipts value | ~GH¢44.95B | Cocobod |
-| Oracle attestation validity | 24 hours | System config |
-| Block interval | 5 seconds | Ledger config |
+ Parameter  Value  Source 
+
+ Gold reserve allocation  10% of BoG holdings  Whitepaper §4.1 
+ Money multiplier  2.5×  BoG monetary policy 
+ Cocoa producer price  GH¢2,070/bag (64kg)  Cocobod 2024/2025 
+ Annual gold royalty rate  5%  Act 703 
+ Annual cocoa receipts value  ~GH¢44.95B  Cocobod 
+ Oracle attestation validity  24 hours  System config 
+ Block interval  5 seconds  Ledger config 
 
  Contributing
 

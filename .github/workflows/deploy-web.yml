@@ -5,8 +5,8 @@ on:
     branches:
       - main
     paths:
-      - 'packages/web/**'
-      - 'packages/shared/**'
+      - 'packages/web/'
+      - 'packages/shared/'
       - 'package.json'
       - 'package-lock.json'
       - 'tsconfig.json'

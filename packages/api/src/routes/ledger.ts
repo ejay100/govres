@@ -11,7 +11,7 @@ import { AppError } from '../middleware/error-handler';
 
 const router = Router();
 
-/** GET /api/v1/ledger/status */
+/* GET /api/v1/ledger/status */
 router.get('/status', async (_req: Request, res: Response, next: NextFunction) => {
   try {
     const blocks = await query('SELECT COALESCE(MAX(block_height), 0) as height, COUNT(*) as count FROM ledger_blocks');
@@ -33,7 +33,7 @@ router.get('/status', async (_req: Request, res: Response, next: NextFunction) =
   } catch (error) { next(error); }
 });
 
-/** GET /api/v1/ledger/block/:height */
+/* GET /api/v1/ledger/block/:height */
 router.get('/block/:height', requireRole(UserRole.BOG_ADMIN, UserRole.BOG_AUDITOR), async (req: Request, res: Response, next: NextFunction) => {
   try {
     const height = parseInt(req.params.height, 10);
@@ -44,7 +44,7 @@ router.get('/block/:height', requireRole(UserRole.BOG_ADMIN, UserRole.BOG_AUDITO
   } catch (error) { next(error); }
 });
 
-/** GET /api/v1/ledger/transaction/:txId */
+/* GET /api/v1/ledger/transaction/:txId */
 router.get('/transaction/:txId', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const result = await query('SELECT * FROM ledger_transactions WHERE tx_id = $1', [req.params.txId]);
@@ -53,7 +53,7 @@ router.get('/transaction/:txId', async (req: Request, res: Response, next: NextF
   } catch (error) { next(error); }
 });
 
-/** GET /api/v1/ledger/transactions/recent */
+/* GET /api/v1/ledger/transactions/recent */
 router.get('/transactions/recent', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const limit = parseInt(req.query.limit as string) || 20;
@@ -62,7 +62,7 @@ router.get('/transactions/recent', async (req: Request, res: Response, next: Nex
   } catch (error) { next(error); }
 });
 
-/** GET /api/v1/ledger/account/:accountId/history */
+/* GET /api/v1/ledger/account/:accountId/history */
 router.get('/account/:accountId/history', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const page = parseInt(req.query.page as string) || 1;
@@ -79,7 +79,7 @@ router.get('/account/:accountId/history', async (req: Request, res: Response, ne
   } catch (error) { next(error); }
 });
 
-/** GET /api/v1/ledger/audit-trail */
+/* GET /api/v1/ledger/audit-trail */
 router.get('/audit-trail', requireRole(UserRole.BOG_AUDITOR), async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { from, to, type } = req.query;

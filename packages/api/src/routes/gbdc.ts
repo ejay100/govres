@@ -11,7 +11,7 @@ import { AppError } from '../middleware/error-handler';
 
 const router = Router();
 
-/** POST /api/v1/gbdc/mint — Mint GBDC against gold reserves (BoG only) */
+/* POST /api/v1/gbdc/mint — Mint GBDC against gold reserves (BoG only) */
 router.post('/mint', requireRole(UserRole.BOG_ADMIN), async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { amountCedi, goldBackingGrams, goldPricePerGramUSD, exchangeRateUSDGHS } = req.body;
@@ -39,7 +39,7 @@ router.post('/mint', requireRole(UserRole.BOG_ADMIN), async (req: Request, res: 
   } catch (error) { next(error); }
 });
 
-/** POST /api/v1/gbdc/transfer — Transfer GBDC between accounts */
+/* POST /api/v1/gbdc/transfer — Transfer GBDC between accounts */
 router.post('/transfer', requireRole(UserRole.BOG_ADMIN, UserRole.COMMERCIAL_BANK, UserRole.GOVT_AGENCY), async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { instrumentId, toAccount, amountCedi, description } = req.body;
@@ -59,7 +59,7 @@ router.post('/transfer', requireRole(UserRole.BOG_ADMIN, UserRole.COMMERCIAL_BAN
   } catch (error) { next(error); }
 });
 
-/** POST /api/v1/gbdc/redeem — Redeem GBDC (Banks only) */
+/* POST /api/v1/gbdc/redeem — Redeem GBDC (Banks only) */
 router.post('/redeem', requireRole(UserRole.COMMERCIAL_BANK), async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { instrumentId, amountCedi } = req.body;
@@ -76,7 +76,7 @@ router.post('/redeem', requireRole(UserRole.COMMERCIAL_BANK), async (req: Reques
   } catch (error) { next(error); }
 });
 
-/** GET /api/v1/gbdc/circulation/summary — GBDC circulation metrics */
+/* GET /api/v1/gbdc/circulation/summary — GBDC circulation metrics */
 router.get('/circulation/summary', requireRole(UserRole.BOG_ADMIN, UserRole.BOG_AUDITOR, UserRole.COMMERCIAL_BANK), async (_req: Request, res: Response, next: NextFunction) => {
   try {
     const result = await query(`
@@ -92,7 +92,7 @@ router.get('/circulation/summary', requireRole(UserRole.BOG_ADMIN, UserRole.BOG_
   } catch (error) { next(error); }
 });
 
-/** GET /api/v1/gbdc/:instrumentId — GBDC details */
+/* GET /api/v1/gbdc/:instrumentId — GBDC details */
 router.get('/:instrumentId', async (req: Request, res: Response, next: NextFunction) => {
   try {
     const result = await query('SELECT * FROM gbdc_instruments WHERE instrument_id = $1', [req.params.instrumentId]);
